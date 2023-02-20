@@ -1,0 +1,46 @@
+﻿@page "/SalesTransactions"
+@using avanphamaceuticalsmanagement.Client.Services.Interfaces;
+@using avanphamaceuticalsmanagement.Shared.Models;
+<MudCard>
+    <MudCardHeader>
+        <MudText Align="Align.Left" Typo="Typo.h6">Transactions</MudText>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudGrid>
+            <MudItem xs="12" md="6">
+                <MudTextField T="string" Label="Patient Name" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+            </MudItem>
+             <MudItem xs="12" md="6">
+                <MudTextField T="string" Label="Condition" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField T="string" Label="Prescribed Drug" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField T="string" Label="Quantity" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField T="string" Label="Prescribed By" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+            </MudItem>
+        </MudGrid>
+    </MudCardContent>
+</MudCard>
+
+
+@code {
+    [Inject] IGenericService GenericService { get; set; }
+    protected IList<DrugStockTable> drugs = new List<DrugStockTable>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetDrugs();
+    }
+
+    #region Get Functions
+    protected async Task GetDrugs()
+    {
+        var result =  await GenericService.GetAllAsync<DrugStockTable>("api/AvanPharmacy/")
+    }
+    #endregion
+}

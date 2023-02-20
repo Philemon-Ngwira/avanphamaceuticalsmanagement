@@ -1,0 +1,88 @@
+﻿@page "/DrugManagement"
+@using avanphamaceuticalsmanagement.Client.Services.Interfaces;
+@using avanphamaceuticalsmanagement.Shared.Models;
+<MudCard>
+    <MudCardHeader>
+        <MudText Align="Align.Center" Typo="Typo.h6"><b>Drug Management</b></MudText>
+    </MudCardHeader>
+    <MudDivider></MudDivider>
+    <MudAlert Severity="Severity.Normal" Icon="@Icons.Material.Filled.Info">Select Task Below</MudAlert>
+    <MudCardContent>
+        <MudTabs Rounded="true" Outlined="true" ApplyEffectsToContainer="true" Class="mt-8" SliderColor="Color.Tertiary" Position="Position.Left" PanelClass="pa-6">
+            <MudTabPanel Icon="@Icons.Material.Filled.MedicalServices" Text="Add Drugs">
+                <MudGrid>
+                    <MudItem xs="12">
+                        <MudForm Style="outline">
+                            <MudAlert AlertTextPosition="AlertTextPosition.Left" Dense="true" Icon="@Icons.Material.Filled.Edit" Severity="Severity.Info">Enter Required Information</MudAlert>
+                            <MudTextField T="string" Required="true" Label="Drug Name" @bind-Value="stockTable.DrugName" Variant="Variant.Outlined" Margin="Margin.Dense" Class="form-control" FullWidth="true"></MudTextField>
+                            <MudTextField T="string" Required="true" Label="Drug Code" @bind-Value="stockTable.DrugCode" Variant="Variant.Outlined" Margin="Margin.Dense" Class="form-control" FullWidth="true"></MudTextField>
+                            <MudNumericField T="int?" Required="true" Label="Quantity" @bind-Value="stockTable.Quantity" Variant="Variant.Outlined" Margin="Margin.Dense" Class="form-control" FullWidth="true"></MudNumericField>
+                            <MudNumericField T="double?" Required="true" Label="Price(ZMW)" @bind-Value="stockTable.Price" Variant="Variant.Outlined" Margin="Margin.Dense" Class="form-control" FullWidth="true"></MudNumericField>
+                            <MudTextField T="string" Required="true" Label="Description" Lines="3" @bind-Value="stockTable.Description" Variant="Variant.Outlined" Margin="Margin.Dense" Class="form-control" FullWidth="true"></MudTextField>
+                        </MudForm>
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudButton ButtonType="ButtonType.Button" Color="Color.Success" Variant="Variant.Filled" FullWidth="true" EndIcon="@Icons.Material.Filled.SaveAlt" OnClick="SaveDrugs">Save</MudButton>
+                    </MudItem>
+                </MudGrid>
+
+            </MudTabPanel>
+            <MudTabPanel Icon="@Icons.Material.Filled.MedicalInformation" OnClick="GetDrugs" Text="Edit Drugs">
+                <MudItem xs="12">
+                    <MudTable Items="@drugs" Dense="true" Hover="true" Bordered="false" Striped="true" Filter="new Func<DrugStockTable,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem">
+                        <ToolBarContent>
+                            <MudText Typo="Typo.h6"><b>Current Available Drugs</b></MudText>
+                            <MudSpacer />
+                            <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                        </ToolBarContent>
+                        <HeaderContent>
+                            <MudTh>DrugCode</MudTh>
+                            <MudTh>DrugName</MudTh>
+                            <MudTh>Price</MudTh>
+                            <MudTh>Quantity</MudTh>
+                            <MudTh>Action</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="Nr">@context.DrugCode</MudTd>
+                            <MudTd DataLabel="Sign">@context.DrugName</MudTd>
+                            <MudTd DataLabel="Name">ZMW @context.Price</MudTd>
+                            <MudTd DataLabel="Position">@context.Quantity</MudTd>
+                            <MudTd DataLabel="Action"><MudFab Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Color="Color.Warning" OnClick="@(() => EditDrug(context.Id))"></MudFab><MudFab Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"></MudFab></MudTd>
+
+                        </RowTemplate>
+                        <PagerContent>
+                            <MudTablePager />
+                        </PagerContent>
+                    </MudTable>
+                </MudItem>
+            </MudTabPanel>
+        </MudTabs>
+    </MudCardContent>
+</MudCard>
+
+<MudDrawer @bind-Open="@openeditdrawer" Anchor="Anchor.End" Elevation="0" Variant="@DrawerVariant.Temporary" Width="900px">
+    <MudDrawerHeader>
+        <MudText Typo="Typo.h6">Edit Drug</MudText>
+    </MudDrawerHeader>
+    <MudCard Class="mb-3">
+        <MudCardContent>
+            <MudForm Style="outline">
+                <MudAlert AlertTextPosition="AlertTextPosition.Left" Dense="true" Icon="@Icons.Material.Filled.Edit" Severity="Severity.Info">Edit Information</MudAlert>
+                <MudTextField T="string" Required="true" Label="Drug Name" @bind-Value="stockTable.DrugName" Variant="Variant.Outlined" Margin="Margin.Dense" Class="form-control"></MudTextField>
+                <MudTextField T="string" Required="true" Label="Drug Code" @bind-Value="stockTable.DrugCode" Variant="Variant.Outlined" Margin="Margin.Dense" Class="form-control"></MudTextField>
+                <MudNumericField T="int?" Required="true" Label="Quantity" @bind-Value="stockTable.Quantity" Variant="Variant.Outlined" Margin="Margin.Dense" Class="form-control"></MudNumericField>
+                <MudNumericField T="double?" Required="true" Label="Price(ZMW)" @bind-Value="stockTable.Price" Variant="Variant.Outlined" Margin="Margin.Dense" Class="form-control"></MudNumericField>
+                <MudTextField T="string" Required="true" Label="Description" Lines="3" @bind-Value="stockTable.Description" Variant="Variant.Outlined" Margin="Margin.Dense" Class="form-control"></MudTextField>
+            </MudForm>
+        </MudCardContent>
+        <MudCardActions>
+            <MudButtonGroup OverrideStyles = "false">
+                <MudButton ButtonType="ButtonType.Button" Color="Color.Warning" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Update" OnClick="@CompleteEdit">Update</MudButton>
+                <MudButton ButtonType="ButtonType.Button" Color="Color.Error" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Cancel">Cancel</MudButton>
+            </MudButtonGroup>
+        </MudCardActions>
+    </MudCard>
+</MudDrawer>
+
+
+

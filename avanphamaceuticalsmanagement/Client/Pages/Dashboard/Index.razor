@@ -1,0 +1,45 @@
+﻿@page "/"
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
+<MudCard Class="mb-3">
+    <MudCardHeader>
+
+        <CardHeaderContent>
+            <div>
+                <MudText Align="Align.Center" Typo="Typo.h5"><b>AVAN PHARMACEUTICALS</b></MudText>
+            </div>
+            <div>
+                <MudAlert Icon="@Icons.Material.Filled.Info">
+                    <MudText Align="Align.Left">Hello @name!, Welcome to Avan Pharmaceuticals Management Portal </MudText>
+                </MudAlert>
+            </div>
+            <MudDivider>
+                <MudAlert></MudAlert>
+            </MudDivider>
+            <MudText Align="Align.Left" Typo="Typo.subtitle1"><b>Dashboard</b></MudText>
+            <MudDivider />
+            <MudGrid>
+                <MudItem xs="12"md="6">
+                    <MudTimePicker PickerVariant="PickerVariant.Static" Time="time" AmPm="true" />
+                </MudItem>
+            </MudGrid>
+           
+        </CardHeaderContent>
+
+
+    </MudCardHeader>
+</MudCard>
+
+
+@code {
+    [Inject] AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+    TimeSpan time = new TimeSpan();
+    protected override async Task OnInitializedAsync()
+    {
+        var auth = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = auth.User;
+        name = user.Identity.Name;
+       
+    }
+    protected string name = "Philemon";
+}

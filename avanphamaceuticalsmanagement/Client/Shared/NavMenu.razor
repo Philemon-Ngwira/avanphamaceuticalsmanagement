@@ -1,0 +1,9 @@
+﻿<MudNavMenu>
+    <MudNavLink Href="/" Match="NavLinkMatch.All">Dashboard</MudNavLink>
+    <MudNavLink Href="/servers" Match="NavLinkMatch.Prefix">Servers</MudNavLink>
+    <MudNavGroup Title="Management" Icon="@Icons.Material.Filled.MedicalServices" Expanded="false">
+        <MudNavLink Href="/DrugManagement"  Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Store">Stock Management</MudNavLink>
+        <MudNavLink Href="/SalesTransactions"  Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.PointOfSale">Sales Transactions</MudNavLink>
+    </MudNavGroup>
+    <MudNavLink Href="/about"  Match="NavLinkMatch.Prefix">About</MudNavLink>
+</MudNavMenu>

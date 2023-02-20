@@ -1,0 +1,65 @@
+﻿{
+   "CodeGenerationMode": 3,
+   "ContextClassName": "avanpharmacyDbContext",
+   "ContextNamespace": null,
+   "DefaultDacpacSchema": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": false,
+   "ModelNamespace": null,
+   "OutputContextPath": null,
+   "OutputPath": "Models",
+   "PreserveCasingWithRegex": true,
+   "ProjectRootNamespace": "avanphamaceuticalsmanagement.Shared",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 0,
+   "SelectedToBeGenerated": 2,
+   "Tables": [
+      {
+         "Name": "[dbo].[DeviceCodes]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[DrugStockTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EmployeesTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Keys]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[PatientsTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[PersistedGrants]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[PharmacyTransactionsTable]",
+         "ObjectType": 0
+      }
+   ],
+   "UiHint": "PHOENIX\\SQLEXPRESS.avanpharmacyDb",
+   "UncountableWords": null,
+   "UseBoolPropertiesWithoutDefaultSql": false,
+   "UseDatabaseNames": true,
+   "UseDateOnlyTimeOnly": false,
+   "UseDbContextSplitting": false,
+   "UseFluentApiOnly": false,
+   "UseHandleBars": false,
+   "UseHierarchyId": false,
+   "UseInflector": true,
+   "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": false,
+   "UseNoDefaultConstructor": false,
+   "UseNoObjectFilter": false,
+   "UseNodaTime": false,
+   "UseNullableReferences": false,
+   "UseSchemaFolders": false,
+   "UseSpatial": false,
+   "UseT4": false
+}
