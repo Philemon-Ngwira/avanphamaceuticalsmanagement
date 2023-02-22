@@ -87,6 +87,22 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Management
             }
         }
 
+       public async Task DeleteDrugs(int id)
+        {
+            try
+            {
+                await _genericService.DeleteAsync($"api/AvanPharmacy/DeleteDrugs/{id}");
+                Snackbar.Add("Record Successfully Removed", Severity.Warning);
+                await GetDrugs();
+            }
+            catch (Exception ex)
+            {
+                var _ = ex.Message;
+                Snackbar.Add(_, Severity.Error);    
+                throw;
+            }
+        }
+
         #endregion
     }
 }

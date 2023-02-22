@@ -4,16 +4,23 @@
 
 <AuthorizeView>
     <Authorized>
-        <a href="authentication/profile">Hello, @context.User.Identity?.Name!</a>
-        <button class="nav-link btn btn-link" @onclick="BeginLogOut">Log out</button>
+
+        <MudButton Color="Color.Primary"><a href="authentication/profile">Hello, @context.User.Identity?.Name!</a></MudButton>
+
+        <MudButton Color="Color.Error" StartIcon="@Icons.Material.Filled.Logout" OnClick="BeginLogOut">Log Out</MudButton>
+        @*  <button class="nav-link btn btn-link" @onclick="BeginLogOut">Log out</button>*@
     </Authorized>
     <NotAuthorized>
-        <a href="authentication/register">Register</a>
-        <a href="authentication/login">Log in</a>
+        <MudButtonGroup OverrideStyles="false">
+            <MudButton Href="authentication/register" Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.AppRegistration">Register</MudButton>
+            <MudButton Href="authentication/login" Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.Login">Log In</MudButton>
+        </MudButtonGroup>
+        @*<a href="authentication/register">Register</a>
+        <a href="authentication/login">Log in</a>*@
     </NotAuthorized>
 </AuthorizeView>
 
-@code{
+@code {
     private void BeginLogOut()
     {
         Navigation.NavigateToLogout("authentication/logout");

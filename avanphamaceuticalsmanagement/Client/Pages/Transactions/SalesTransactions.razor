@@ -3,44 +3,116 @@
 @using avanphamaceuticalsmanagement.Shared.Models;
 <MudCard>
     <MudCardHeader>
-        <MudText Align="Align.Left" Typo="Typo.h6">Transactions</MudText>
+        <MudText Align="Align.Left" Typo="Typo.h6"><b>Transactions</b></MudText>
     </MudCardHeader>
     <MudCardContent>
+
+        <MudAlert AlertTextPosition="AlertTextPosition.Left" Dense="true" Icon="@Icons.Material.Filled.Edit" Severity="Severity.Info">Enter Required Details</MudAlert>
+        <MudDivider />
         <MudGrid>
             <MudItem xs="12" md="6">
-                <MudTextField T="string" Label="Patient Name" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
-            </MudItem>
-             <MudItem xs="12" md="6">
-                <MudTextField T="string" Label="Condition" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                <MudTextField T="string" Label="Patient First Name" @bind-Value="@PatientFirstName" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
             </MudItem>
             <MudItem xs="12" md="6">
-                <MudTextField T="string" Label="Prescribed Drug" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                <MudTextField T="string" Label="Patient Last Name" @bind-Value="@PatientLastName" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
             </MudItem>
             <MudItem xs="12" md="6">
-                <MudTextField T="string" Label="Quantity" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                <MudTextField T="string" Label="Condition" @bind-Value="@PatientCondition" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
             </MudItem>
             <MudItem xs="12" md="6">
-                <MudTextField T="string" Label="Prescribed By" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                <MudSelect T="DrugStockTable" Margin="Margin.Dense" @bind-Value="selectedDrug" ToStringFunc="Drugsconverter" Variant="Variant.Outlined" Placeholder="Prescribed Drug" Label="Select Drug">
+                    @foreach (var item in drugs)
+                    {
+                        <MudSelectItem T="DrugStockTable" Value="item">@item.DrugName</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudNumericField T="int?" Label="Quantity" @bind-Value="Quantity" Variant="Variant.Outlined" Margin="Margin.Dense"></MudNumericField>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudSelect T="EmployeesTable" Margin="Margin.Dense" ToStringFunc="Employeesconverter" @bind-Value="pharmacist" Variant="Variant.Outlined" Placeholder="Prescribed By" Label="Prescribed By">
+                    @foreach (var item in employees)
+                    {
+                        <MudSelectItem T="EmployeesTable" Value="item">@item.FirstName</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12">
+                <MudDatePicker PickerVariant="PickerVariant.Inline" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Current Date" Disabled="true" ReadOnly="true" Orientation="Orientation.Landscape" Date="@date" />
             </MudItem>
         </MudGrid>
     </MudCardContent>
+    <MudCardActions>
+        <MudButtonGroup OverrideStyles="false">
+            <MudButton ButtonType="ButtonType.Button" Color="Color.Success" StartIcon="@Icons.Material.Filled.SaveAlt" Variant="Variant.Filled" FullWidth="true" OnClick="SubmitSale">Submit</MudButton>
+        </MudButtonGroup>
+    </MudCardActions>
 </MudCard>
 
 
 @code {
     [Inject] IGenericService GenericService { get; set; }
+    [Inject] ISnackbar Snackbar { get; set; }
+    [Inject] AuthenticationStateProvider AuthenticationState { get; set; }
+    protected PharmacyTransactionsTable sale = new();
+    protected DrugStockTable selectedDrug = new();
+    protected EmployeesTable pharmacist = new();
+    protected PatientsTable Patient = new();
     protected IList<DrugStockTable> drugs = new List<DrugStockTable>();
-
+    protected IList<EmployeesTable> employees = new List<EmployeesTable>();
+    protected int? Quantity;
+    protected string PatientFirstName = string.Empty;
+    protected string PatientLastName = string.Empty;
+    protected string PatientCondition = string.Empty;
+    protected DateTime date = DateTime.Now;
 
     protected override async Task OnInitializedAsync()
     {
         await GetDrugs();
+        await GetEmployees();
+
     }
 
     #region Get Functions
     protected async Task GetDrugs()
     {
-        var result =  await GenericService.GetAllAsync<DrugStockTable>("api/AvanPharmacy/")
+        var result = await GenericService.GetAllAsync<DrugStockTable>("api/AvanPharmacy/GetDrugs");
+        drugs = result.ToList();
     }
+    protected async Task GetEmployees()
+    {
+        var result = await GenericService.GetAllAsync<EmployeesTable>("api/AvanPharmacy/GetAllEmployees");
+        employees = result.ToList();
+    }
+    #endregion
+    protected async Task SubmitSale()
+    {
+
+        selectedDrug.Quantity = selectedDrug.Quantity - Quantity;
+        await GenericService.UpdateAsync("api/AvanPharmacy/UpdateDrugs", selectedDrug);
+        Patient.FirstName = PatientFirstName;
+        Patient.LastName = PatientLastName;
+        Patient.Complaint = PatientCondition;
+        var result = await GenericService.SaveAllAsync("api/AvanPharmacy/SavePatient", Patient);
+        sale.Patient = result;
+        sale.PatientId = sale.Patient.Id;
+        sale.DrugId = selectedDrug.Id;
+        sale.PrescribedBy = pharmacist.Id;
+        sale.Patient = null;
+        sale.Drug = null;
+        sale.Date = date;
+        double? Amount = drugs.Where(x => x.Id == sale.DrugId).Select(x => x.Price).FirstOrDefault();
+        sale.saleAmout = Convert.ToDouble(Amount * Quantity);
+        sale.Quantity = Quantity;
+        await GenericService.SaveAllAsync("api/AvanPharmacy/SaveSale", sale);
+        Snackbar.Add("Transaction Added Successfully", Severity.Success);
+
+
+    }
+
+    #region String Functions
+    protected Func<DrugStockTable, string> Drugsconverter = p => p.DrugName;
+    protected Func<EmployeesTable, string> Employeesconverter = p => p.LastName;
     #endregion
 }

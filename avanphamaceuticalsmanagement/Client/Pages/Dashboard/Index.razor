@@ -1,5 +1,7 @@
 ﻿@page "/"
 @using Microsoft.AspNetCore.Authorization;
+@using avanphamaceuticalsmanagement.Client.Services.Interfaces;
+@using avanphamaceuticalsmanagement.Shared.Models;
 @attribute [Authorize]
 <MudCard Class="mb-3">
     <MudCardHeader>
@@ -19,11 +21,163 @@
             <MudText Align="Align.Left" Typo="Typo.subtitle1"><b>Dashboard</b></MudText>
             <MudDivider />
             <MudGrid>
-                <MudItem xs="12"md="6">
-                    <MudTimePicker PickerVariant="PickerVariant.Static" Time="time" AmPm="true" />
+                <MudItem xs="12" md="3">
+                    <MudCard Elevation="2" Square="false" Class="mb-3">
+                        <MudCardHeader>
+                            <MudIcon Icon="@Icons.Material.Filled.People"></MudIcon>
+                            <MudText Align="Align.Left" Typo="Typo.subtitle1"><b>Total Employees</b></MudText>
+                        </MudCardHeader>
+                        <MudDivider />
+                        <MudCardContent>
+                            @if (employees.Count == 0)
+                            {
+                                <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" Size="Size.Small" />
+                            }
+                            else
+                            {
+                                @if (employees.Count == 1)
+                                {
+                                    <MudText Align="Align.Left" Typo="Typo.subtitle2">@employees.Count Total Employee</MudText>
+                                }
+                                else
+                                {
+                                    <MudText Align="Align.Left" Typo="Typo.subtitle2">@employees.Count Total Employees</MudText>
+                                }
+
+                            }
+                        </MudCardContent>
+                    </MudCard>
+                </MudItem>
+                <MudItem xs="12" md="3">
+                    <MudCard Elevation="2" Square="false" Class="mb-3">
+                        <MudCardHeader>
+                            <MudIcon Icon="@Icons.Material.Filled.Sick"></MudIcon>
+                            <MudText Align="Align.Left" Typo="Typo.subtitle1"><b>Total Patients</b></MudText>
+                        </MudCardHeader>
+                        <MudDivider />
+                        <MudCardContent>
+                            @if (_patients.Count == 0)
+                            {
+                                <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" Size="Size.Small" />
+                            }
+                            else
+                            {
+                                @if (_patients.Count == 1)
+                                {
+                                    <MudText Align="Align.Left" Typo="Typo.subtitle2">@_patients.Count Current Patient</MudText>
+                                }
+                                else
+                                {
+                                    <MudText Align="Align.Left" Typo="Typo.subtitle2">@_patients.Count Current Patients</MudText>
+                                }
+                            }
+                        </MudCardContent>
+                    </MudCard>
+                </MudItem>
+                <MudItem xs="12" md="3">
+                    <MudCard Elevation="2" Square="false" Class="mb-3">
+                        <MudCardHeader>
+                            <MudIcon Icon="@Icons.Material.Filled.Warehouse"></MudIcon>
+                            <MudText Align="Align.Left" Typo="Typo.subtitle1"><b>Total Stock</b></MudText>
+                        </MudCardHeader>
+                        <MudDivider />
+                        <MudCardContent>
+                            @if (_drugs.Count == 0)
+                            {
+                                <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" Size="Size.Small" />
+                            }
+                            else
+                            {
+                                @if (@drugStock == 1)
+                                {
+                                    <MudText Align="Align.Left" Typo="Typo.subtitle2">@drugStock Drug Total</MudText>
+                                }
+                                else
+                                {
+                                    <MudText Align="Align.Left" Typo="Typo.subtitle2">@drugStock Drugs Total</MudText>
+                                }
+
+                            }
+                        </MudCardContent>
+                    </MudCard>
+                </MudItem>
+                <MudItem xs="12" md="3">
+                    <MudCard Elevation="2" Square="false" Class="mb-3">
+                        <MudCardHeader>
+                            <MudIcon Icon="@Icons.Material.Filled.ShoppingCart"></MudIcon>
+                            <MudText Align="Align.Left" Typo="Typo.subtitle1"><b>Total Sales</b></MudText>
+                        </MudCardHeader>
+                        <MudDivider />
+                        <MudCardContent>
+                            @if (_sales.Count == 0)
+                            {
+                                <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" Size="Size.Small" />
+                            }
+                            else
+                            {
+                                @if (_sales.Count == 1)
+                                {
+                                    <MudText Align="Align.Left" Typo="Typo.subtitle2">@_sales.Count Prescription sold</MudText>
+                                }
+                                else
+                                {
+                                    <MudText Align="Align.Left" Typo="Typo.subtitle2">@_sales.Count Prescriptions sold</MudText>
+                                }
+                            }
+
+                        </MudCardContent>
+                    </MudCard>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudCard Elevation="2" Square="false" Class="mb-3">
+                        <MudCardHeader>
+                            <MudIcon Icon="@Icons.Material.Filled.AreaChart"></MudIcon>
+                            <MudText Align="Align.Left" Typo="Typo.subtitle1"><b>Monthly Sale Recap</b></MudText>
+                        </MudCardHeader>
+                        <MudDivider />
+                        <MudCardContent>
+                            <div>
+                                <MudAlert Icon="@Icons.Material.Filled.MonetizationOn" Severity="Severity.Info">
+                                    <MudText Align="Align.Left" Typo="Typo.body1"><b>ZMW @formattedRevenueValue Total Revenue</b></MudText>
+                                </MudAlert>
+
+                                <MudChart ChartType="ChartType.Line" ChartSeries="@MonthlySales" @bind-SelectedIndex="LineIndex" XAxisLabels="@XAxisLabels" Width="100%" Height="450px"></MudChart>
+
+                            </div>
+                            <MudDivider />
+                            <MudText Typo="Typo.body1"><b>Sales in (ZMW)</b></MudText>
+                        </MudCardContent>
+                    </MudCard>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudCard Elevation="2" Square="false" Class="mb-3">
+                        <MudCardHeader>
+                            <MudIcon Icon="@Icons.Material.Filled.AddChart"></MudIcon>
+                            <MudText Align="Align.Left" Typo="Typo.subtitle1"><b>Goal Status</b></MudText>
+                        </MudCardHeader>
+                        <MudDivider />
+                        <MudCardContent>
+                            <div>
+                                <MudText Align="Align.Left" Typo="Typo.subtitle2">Sales:</MudText>
+                                <MudProgressLinear Color="Color.Info" Size="Size.Large" Value="25" Class="my-7">
+                                    <MudText Typo="Typo.subtitle1" Color="Color.Surface">
+                                        <b>25%</b>
+                                    </MudText>
+                                </MudProgressLinear>
+                            </div>
+                            <div>
+                                <MudText Align="Align.Left" Typo="Typo.subtitle2">Patients:</MudText>
+                                <MudProgressLinear Color="Color.Secondary" Size="Size.Large" Value="75" Class="my-7">
+                                    <MudText Typo="Typo.subtitle1" Color="Color.Surface">
+                                        <b>75%</b>
+                                    </MudText>
+                                </MudProgressLinear>
+                            </div>
+                        </MudCardContent>
+                    </MudCard>
                 </MudItem>
             </MudGrid>
-           
+
         </CardHeaderContent>
 
 
@@ -31,15 +185,3 @@
 </MudCard>
 
 
-@code {
-    [Inject] AuthenticationStateProvider AuthenticationStateProvider { get; set; }
-    TimeSpan time = new TimeSpan();
-    protected override async Task OnInitializedAsync()
-    {
-        var auth = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = auth.User;
-        name = user.Identity.Name;
-       
-    }
-    protected string name = "Philemon";
-}

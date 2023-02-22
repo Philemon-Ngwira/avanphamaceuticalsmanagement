@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using avanphamaceuticalsmanagement.Shared.Models;
-
 using Microsoft.EntityFrameworkCore;
 
 namespace AvanPharmacyDomain.Data;

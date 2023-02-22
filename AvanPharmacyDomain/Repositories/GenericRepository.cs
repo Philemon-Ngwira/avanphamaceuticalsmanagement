@@ -69,5 +69,24 @@ namespace AvanPharmacyDomain.Repositories
                 throw;
             }
         }
+
+        public async Task DeleteAllAsync<T>(int id) where T : class
+        {
+            try
+            {
+                var result = await _dbContext.Set<T>().FindAsync(id);
+                if (result == null)
+                    return;
+
+                _dbContext.Remove(result);
+                await _dbContext.SaveChangesAsync();
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

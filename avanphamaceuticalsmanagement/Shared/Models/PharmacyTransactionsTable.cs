@@ -23,6 +23,10 @@ public partial class PharmacyTransactionsTable
     [Column(TypeName = "datetime")]
     public DateTime? Date { get; set; }
 
+    public double saleAmout { get; set; }
+
+    public int? Quantity { get; set; }
+
     [ForeignKey("DrugId")]
     [InverseProperty("PharmacyTransactionsTables")]
     public virtual DrugStockTable Drug { get; set; }

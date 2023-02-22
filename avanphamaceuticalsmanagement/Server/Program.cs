@@ -35,11 +35,16 @@ namespace avanphamaceuticalsmanagement
                 .AddIdentityServerJwt();
             builder.Services.AddScoped<IGenericRepository, GenericRepository>();
             builder.Services.AddScoped<AvanPharmacyRepository>();
+            builder.Services.AddSwaggerGen();
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
-
+          
             var app = builder.Build();
-
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Blazor API V1");
+            });
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {

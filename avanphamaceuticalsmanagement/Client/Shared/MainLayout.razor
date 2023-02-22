@@ -10,7 +10,8 @@
         <MudIconButton Icon="@Icons.Material.Filled.Menu"  Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         Avan Pharmaceuticals
         <MudSpacer /> 
-        <MudSwitch @bind-Checked="@isDarkMode" ThumbIcon="@(isDarkMode==true ? Icons.Material.Outlined.DarkMode : Icons.Material.Outlined.LightMode)" ThumbIconColor="@(isDarkMode==true ? Color.Dark : Color.Primary)">Dark Mode?</MudSwitch>
+        <MudSwitch @bind-Checked="@isDarkMode" ThumbIcon="@(isDarkMode==true ? Icons.Material.Outlined.DarkMode : Icons.Material.Outlined.LightMode)" ThumbIconColor="@(isDarkMode==true ? Color.Dark : Color.Primary)">Theme</MudSwitch>
+        
         <LoginDisplay />
     </MudAppBar>
     <MudDrawer @bind-Open="@_drawerOpen" ClipMode="DrawerClipMode.Docked">

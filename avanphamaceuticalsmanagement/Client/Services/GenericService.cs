@@ -54,5 +54,19 @@ namespace avanphamaceuticalsmanagement.Client.Services
             }
             
         }
+        public async Task<bool> DeleteAsync(string api) 
+        {
+            try
+            {
+                var result = await _httpClient.DeleteAsync(api);
+                var deleted =await result.Content.ReadFromJsonAsync<bool>();
+                return deleted;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }
