@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
 using avanphamaceuticalsmanagement.Client.Services.Interfaces;
 using avanphamaceuticalsmanagement.Shared.Models;
+using System.Diagnostics;
+using avanphamaceuticalsmanagement.Client.Services;
 
 namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
 {
@@ -20,9 +22,14 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
         protected IList<DrugStockTable> _drugs = new List<DrugStockTable>();
         protected IList<EmployeesTable> employees = new List<EmployeesTable>();
         protected IList<PharmacyTransactionsTable> _sales = new List<PharmacyTransactionsTable>();
+        protected IList<StockCategoryTable> stockCategories = new List<StockCategoryTable>();
         protected int? drugStock = 0;
+        protected string SalesError = string.Empty;
         protected double? totalRevenue = 0;
         protected double[] salesData = new double[12];
+        protected double[] donutdata;
+        protected string[] labels;
+        protected List<string> names = new();
         string formattedRevenueValue;
         protected override async Task OnInitializedAsync()
         {
@@ -33,7 +40,10 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
             await GetAllEmployees();
             await GetAllDrugs();
             await GetTransactions();
+            await getStockCategories();
             await FillChart();
+            await FillDonutChart();
+
         }
 
         protected string name = "Philemon";
@@ -52,18 +62,28 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
 
         protected async Task GetAllDrugs()
         {
+
             var result = await _genericService.GetAllAsync<DrugStockTable>("api/AvanPharmacy/GetDrugs");
             _drugs = result.ToList();
             drugStock = _drugs.Select(x => x.Quantity).Sum();
         }
-
+        protected async Task getStockCategories()
+        {
+            var result = await _genericService.GetAllAsync<StockCategoryTable>("api/AvanPharmacy/GetCategories");
+            stockCategories = result.ToList();
+        }
         protected async Task GetTransactions()
         {
-            var result = await _genericService.GetAllAsync<PharmacyTransactionsTable>("api/AvanPharmacy/GetTransactions");
+            var result = await _genericService.GetAllAsync<PharmacyTransactionsTable>("api/AvanPharmacy/GetAllTransactions");
             _sales = result.ToList();
             totalRevenue = _sales.Sum(x => x.saleAmout);
-             double value = (double)totalRevenue;
+            double value = (double)totalRevenue;
             formattedRevenueValue = value.ToString("#,##0.00");
+            Task.Delay(1);
+            if (_sales.Count == 0)
+            {
+                SalesError = "No sales Recorded Yet.";
+            }
         }
 
         #endregion
@@ -89,7 +109,7 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
         public async Task FillChart()
         {
             MonthlySalesChart.Name = "Monthly Sales";
-            double Jan =Convert.ToDouble( _sales.Where(x => x.Date.Value.Month == 1).Sum(x => x.saleAmout));
+            double Jan = Convert.ToDouble(_sales.Where(x => x.Date.Value.Month == 1).Sum(x => x.saleAmout));
             double Feb = Convert.ToDouble(_sales.Where(x => x.Date.Value.Month == 2).Sum(x => x.saleAmout));
             double Mar = Convert.ToDouble(_sales.Where(x => x.Date.Value.Month == 3).Sum(x => x.saleAmout));
             double Apr = Convert.ToDouble(_sales.Where(x => x.Date.Value.Month == 4).Sum(x => x.saleAmout));
@@ -116,6 +136,31 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
             MonthlySalesChart.Data = salesData;
             MonthlySales.Add(MonthlySalesChart);
         }
+        #endregion
+        #region Donught Chart
+        protected async Task FillDonutChart()
+        {
+            donutdata = new double[_sales.Count];
+            labels =  new string[_sales.Count];
+           
+            foreach (var item in _sales)
+            {
+                item.StockCategory = stockCategories.Where(x => x.Id == item.StockCategoryId).FirstOrDefault();
+            }
+            for (int i = 0; i < _sales.Count; i++)
+            {
+                PharmacyTransactionsTable sale = _sales[i];
+                
+                names.Add(sale.StockCategory.StockCategoryName);
+                labels = names.ToArray();
+                donutdata[i] = sale.saleAmout;
+            }
+       
+
+        }
+
+
+
         #endregion
     }
 }

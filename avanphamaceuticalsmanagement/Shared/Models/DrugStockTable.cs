@@ -29,6 +29,18 @@ public partial class DrugStockTable
     [Unicode(false)]
     public string Description { get; set; }
 
+    [StringLength(50)]
+    [Unicode(false)]
+    public string Unit { get; set; }
+
+    public double? OrderPrice { get; set; }
+
+    public int? DrugCat { get; set; }
+
+    [ForeignKey("DrugCat")]
+    [InverseProperty("DrugStockTables")]
+    public virtual Drugcategory DrugCatNavigation { get; set; }
+
     [InverseProperty("Drug")]
     public virtual ICollection<PharmacyTransactionsTable> PharmacyTransactionsTables { get; } = new List<PharmacyTransactionsTable>();
 }

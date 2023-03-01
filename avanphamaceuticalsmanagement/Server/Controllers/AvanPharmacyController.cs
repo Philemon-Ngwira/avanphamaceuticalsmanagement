@@ -23,6 +23,13 @@ namespace avanphamaceuticalsmanagement.Server.Controllers
             var drugs = await AvanPharmacyRepository.GetAsync<DrugStockTable>();
             return Ok(drugs);
         }
+      
+        [HttpGet("GetDrugsCategories")]
+        public async Task<IActionResult> GetDrugCatAsync()
+        {
+            var drugs = await AvanPharmacyRepository.GetAsync<Drugcategory>();
+            return Ok(drugs);
+        }
 
         [HttpGet("GetAllEmployees")]
         public async Task<IActionResult> GetEmployeesAsync()
@@ -37,13 +44,36 @@ namespace avanphamaceuticalsmanagement.Server.Controllers
             var employees = await AvanPharmacyRepository.GetAsync<PatientsTable>();
             return Ok(employees);
         }
-        [HttpGet("GetTransactions")]
+        [HttpGet("GetAllTransactions")]
         public async Task<IActionResult> GetTransactionsAsync()
         {
             var employees = await AvanPharmacyRepository.GetAsync<PharmacyTransactionsTable>();
             return Ok(employees);
         }
 
+        [HttpGet("GetCategories")]
+        public async Task<IActionResult> GetCategoriesAsync()
+        {
+            var categoryTables = await AvanPharmacyRepository.GetAsync<StockCategoryTable>();
+            return Ok(categoryTables);
+        }
+        [HttpGet("GetCosmetics")]
+        public async Task<IActionResult> GetCosmetics()
+        {
+            var cosmetic = await AvanPharmacyRepository.GetAsync<CosmeticsStockTable>();
+            return Ok(cosmetic);
+        }
+        //Get By ID
+
+        [HttpGet]
+        [Route("GetDrugsByDrugCategory/{id}")]
+
+        public  IEnumerable<DrugStockTable> GetDrugs(int id)
+        {
+            var res = AvanPharmacyRepository.GetDrugsByDCIdAsync(id);
+
+            return res;
+        }
         #endregion
 
         #region Post
@@ -65,6 +95,7 @@ namespace avanphamaceuticalsmanagement.Server.Controllers
             var result = await AvanPharmacyRepository.SaveAllAsync(sale);
             return Ok(result);
         }
+
         #endregion
 
         #region Update

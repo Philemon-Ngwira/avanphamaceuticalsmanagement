@@ -15,7 +15,19 @@
    "SelectedToBeGenerated": 1,
    "Tables": [
       {
+         "Name": "[dbo].[AgrovetStockTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[CosmeticsStockTable]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[DeviceCodes]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Drugcategories]",
          "ObjectType": 0
       },
       {
@@ -36,6 +48,14 @@
       },
       {
          "Name": "[dbo].[PharmacyTransactionsTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[StockCategoryTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[StockTable]",
          "ObjectType": 0
       }
    ],

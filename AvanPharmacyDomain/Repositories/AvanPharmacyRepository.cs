@@ -36,5 +36,22 @@ namespace AvanPharmacyDomain.Repositories
             }
         }
 
+        public IEnumerable<DrugStockTable> GetDrugsByDCIdAsync(int DCid)
+
+        {
+            try
+            {
+                List<DrugStockTable> areaList = new List<DrugStockTable>();
+                areaList = (from DrugName in _dbContext.DrugStockTables where DrugName.DrugCat == DCid select DrugName).ToList();
+                return areaList;
+            }
+            catch (Exception ex)
+            {
+                var _ = ex.Message;
+                throw;
+            }
+        }
+
+
     }
 }

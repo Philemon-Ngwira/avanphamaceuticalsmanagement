@@ -111,7 +111,15 @@
                         <MudCardContent>
                             @if (_sales.Count == 0)
                             {
-                                <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" Size="Size.Small" />
+                                @if (SalesError != string.Empty)
+                                {
+                                    <MudText Align="Align.Center" Typo="Typo.subtitle1"><b>@SalesError</b></MudText>
+                                }
+                                else
+                                {
+
+                                    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" Size="Size.Small" />
+                                }
                             }
                             else
                             {
@@ -173,6 +181,31 @@
                                     </MudText>
                                 </MudProgressLinear>
                             </div>
+                        </MudCardContent>
+                    </MudCard>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudCard>
+                        <MudCardHeader>
+                            <MudIcon Icon="@Icons.Material.Filled.AutoGraph"></MudIcon>
+                            <MudText Align="Align.Left" Typo="Typo.subtitle1">Highest Selling Products</MudText>
+                        </MudCardHeader>
+                        <MudDivider />
+                        <MudCardContent>
+                            @if (names.Count == 0)
+                            {
+                                <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" Size="Size.Small" />
+                            }
+                            else
+                            {
+                                <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" InputData="@donutdata" InputLabels="@labels">
+                                    <CustomGraphics>
+                                        <text class="donut-inner-text" x="47%" y="35%" dominant-baseline="middle" text-anchor="middle" fill="black" font-family="Helvetica" font-size="2">Total</text>
+                                        <text class="donut-inner-text" x="47%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="black" font-family="Helvetica" font-size="5">@donutdata.Sum().ToString()</text>
+                                    </CustomGraphics>
+                                </MudChart>
+                            }
+
                         </MudCardContent>
                     </MudCard>
                 </MudItem>

@@ -27,9 +27,29 @@ public partial class PharmacyTransactionsTable
 
     public int? Quantity { get; set; }
 
+    public int? StockCategoryId { get; set; }
+
+    public int? AgrovetId { get; set; }
+
+    public int? CosmeticId { get; set; }
+
+    public int? DrugCategoryId { get; set; }
+
+    [ForeignKey("AgrovetId")]
+    [InverseProperty("PharmacyTransactionsTables")]
+    public virtual AgrovetStockTable Agrovet { get; set; }
+
+    [ForeignKey("CosmeticId")]
+    [InverseProperty("PharmacyTransactionsTables")]
+    public virtual CosmeticsStockTable Cosmetic { get; set; }
+
     [ForeignKey("DrugId")]
     [InverseProperty("PharmacyTransactionsTables")]
     public virtual DrugStockTable Drug { get; set; }
+
+    [ForeignKey("DrugCategoryId")]
+    [InverseProperty("PharmacyTransactionsTables")]
+    public virtual Drugcategory DrugCategory { get; set; }
 
     [ForeignKey("PatientId")]
     [InverseProperty("PharmacyTransactionsTables")]
@@ -38,4 +58,8 @@ public partial class PharmacyTransactionsTable
     [ForeignKey("PrescribedBy")]
     [InverseProperty("PharmacyTransactionsTables")]
     public virtual EmployeesTable PrescribedByNavigation { get; set; }
+
+    [ForeignKey("StockCategoryId")]
+    [InverseProperty("PharmacyTransactionsTables")]
+    public virtual StockCategoryTable StockCategory { get; set; }
 }

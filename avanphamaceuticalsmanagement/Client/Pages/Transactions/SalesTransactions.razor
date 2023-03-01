@@ -7,26 +7,69 @@
     </MudCardHeader>
     <MudCardContent>
 
-        <MudAlert AlertTextPosition="AlertTextPosition.Left" Dense="true" Icon="@Icons.Material.Filled.Edit" Severity="Severity.Info">Enter Required Details</MudAlert>
+
+        <MudAlert ContentAlignment="HorizontalAlignment.Left" Dense="true" Icon="@Icons.Material.Filled.Edit" Severity="Severity.Info">Enter Required Details</MudAlert>
         <MudDivider />
         <MudGrid>
             <MudItem xs="12" md="6">
-                <MudTextField T="string" Label="Patient First Name" @bind-Value="@PatientFirstName" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                <MudTextField T="string" Label="Customer First Name" @bind-Value="@PatientFirstName" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
             </MudItem>
             <MudItem xs="12" md="6">
-                <MudTextField T="string" Label="Patient Last Name" @bind-Value="@PatientLastName" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                <MudTextField T="string" Label="Customer Last Name" @bind-Value="@PatientLastName" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
             </MudItem>
             <MudItem xs="12" md="6">
                 <MudTextField T="string" Label="Condition" @bind-Value="@PatientCondition" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
             </MudItem>
+
             <MudItem xs="12" md="6">
-                <MudSelect T="DrugStockTable" Margin="Margin.Dense" @bind-Value="selectedDrug" ToStringFunc="Drugsconverter" Variant="Variant.Outlined" Placeholder="Prescribed Drug" Label="Select Drug">
-                    @foreach (var item in drugs)
+                <MudSelect T="StockCategoryTable" Margin="Margin.Dense" @bind-Value="@selectedCategory" SelectedValuesChanged="GetCosmetics" ToStringFunc="Categoryconverter" Variant="Variant.Outlined" Placeholder="Select Category" Label="Select Category">
+                    @foreach (var item in _StockCategories)
                     {
-                        <MudSelectItem T="DrugStockTable" Value="item">@item.DrugName</MudSelectItem>
+                        <MudSelectItem T="StockCategoryTable" Value="item">@item.StockCategoryName</MudSelectItem>
                     }
                 </MudSelect>
             </MudItem>
+            @if (selectedCategory.StockCategoryName == "Cosmetics")
+            {
+                <MudItem xs="12" md="6">
+                    <MudSelect T="CosmeticsStockTable" Clearable="true" @bind-Value="sale.Cosmetic" ToStringFunc="Cosmeticconverter" Label="Cosmetic" Placeholder="Select Cosmetic" Variant="Variant.Outlined" Margin="Margin.Dense">
+                        @foreach (var item in _cosmeticsStocks)
+                        {
+                            <MudSelectItem T="CosmeticsStockTable" Value="item">@item.CosmeticName</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+            }
+            else if (selectedCategory.StockCategoryName == "Medicine")
+            {
+                <MudItem xs="12" md="6">
+                    <MudSelect T="Drugcategory" Clearable="true" @bind-Value="drugcategory" SelectedValuesChanged="OnDrugCateforySelected" ToStringFunc="DrugCategoryconverter" Label="Drug Category" Placeholder="Select Drug Category" Variant="Variant.Outlined" Margin="Margin.Dense">
+                        @foreach (var item in _drugcategories)
+                        {
+                            <MudSelectItem T="Drugcategory" Value="item">@item.DrugCategoryName</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+            }
+            @if (selectedCategory.Id == 1)
+            {
+
+            }
+            else if (selectedCategory.Id == 2)
+            {
+                <MudItem xs="12" md="6">
+                    <MudSelect T="DrugStockTable" Margin="Margin.Dense" @bind-Value="selectedDrug" ToStringFunc="Drugsconverter" Variant="Variant.Outlined" Placeholder="Prescribed Medicine" Label="Select Drug">
+                        @foreach (var item in drugs)
+                        {
+                            <MudSelectItem T="DrugStockTable" Value="item">@item.DrugName: @item.Unit</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+            }
+            else
+            {
+
+            }
             <MudItem xs="12" md="6">
                 <MudNumericField T="int?" Label="Quantity" @bind-Value="Quantity" Variant="Variant.Outlined" Margin="Margin.Dense"></MudNumericField>
             </MudItem>
@@ -42,11 +85,18 @@
                 <MudDatePicker PickerVariant="PickerVariant.Inline" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Current Date" Disabled="true" ReadOnly="true" Orientation="Orientation.Landscape" Date="@date" />
             </MudItem>
         </MudGrid>
+
+
+
     </MudCardContent>
     <MudCardActions>
         <MudButtonGroup OverrideStyles="false">
             <MudButton ButtonType="ButtonType.Button" Color="Color.Success" StartIcon="@Icons.Material.Filled.SaveAlt" Variant="Variant.Filled" FullWidth="true" OnClick="SubmitSale">Submit</MudButton>
+
         </MudButtonGroup>
+        <MudSpacer />
+        <MudAlert Variant="Variant.Filled" Severity="Severity.Info" Icon="@Icons.Material.Filled.PriceCheck">ZMW @selectedDrug.OrderPrice</MudAlert>
+
     </MudCardActions>
 </MudCard>
 
@@ -57,21 +107,32 @@
     [Inject] AuthenticationStateProvider AuthenticationState { get; set; }
     protected PharmacyTransactionsTable sale = new();
     protected DrugStockTable selectedDrug = new();
+    protected StockCategoryTable selectedCategory = new();
     protected EmployeesTable pharmacist = new();
     protected PatientsTable Patient = new();
+    protected Drugcategory drugcategory = new();
     protected IList<DrugStockTable> drugs = new List<DrugStockTable>();
     protected IList<EmployeesTable> employees = new List<EmployeesTable>();
+    protected IList<StockCategoryTable> _StockCategories = new List<StockCategoryTable>();
+    protected IList<AgrovetStockTable> _agrovetStocks = new List<AgrovetStockTable>();
+    protected IList<CosmeticsStockTable> _cosmeticsStocks = new List<CosmeticsStockTable>();
+    protected IList<Drugcategory> _drugcategories = new List<Drugcategory>();
+
     protected int? Quantity;
     protected string PatientFirstName = string.Empty;
     protected string PatientLastName = string.Empty;
     protected string PatientCondition = string.Empty;
+    protected string DrugName = string.Empty;
+    protected string DrugCategoryName = string.Empty;
+    protected int DrugCategoryId;
     protected DateTime date = DateTime.Now;
+    protected bool notDrug = false;
 
     protected override async Task OnInitializedAsync()
     {
-        await GetDrugs();
         await GetEmployees();
-
+        await getStockCategories();
+        await getDrugCategories();
     }
 
     #region Get Functions
@@ -85,34 +146,93 @@
         var result = await GenericService.GetAllAsync<EmployeesTable>("api/AvanPharmacy/GetAllEmployees");
         employees = result.ToList();
     }
+    protected async Task getStockCategories()
+    {
+        var result = await GenericService.GetAllAsync<StockCategoryTable>("api/AvanPharmacy/GetCategories");
+        _StockCategories = result.ToList();
+    }
+    protected async Task getDrugCategories()
+    {
+        var result = await GenericService.GetAllAsync<Drugcategory>("api/AvanPharmacy/GetDrugsCategories");
+        _drugcategories = result.ToList();
+    }
     #endregion
     protected async Task SubmitSale()
     {
-
-        selectedDrug.Quantity = selectedDrug.Quantity - Quantity;
-        await GenericService.UpdateAsync("api/AvanPharmacy/UpdateDrugs", selectedDrug);
+        @if (selectedDrug.DrugName != null)
+        {
+            selectedDrug.Quantity = selectedDrug.Quantity - Quantity;
+            sale.DrugId = selectedDrug.Id;
+            sale.DrugCategoryId = drugcategory.Id;
+            await GenericService.UpdateAsync("api/AvanPharmacy/UpdateDrugs", selectedDrug);
+        }
+        @if (sale.Cosmetic != null)
+        {
+            sale.CosmeticId = sale.Cosmetic.Id;
+        }
         Patient.FirstName = PatientFirstName;
         Patient.LastName = PatientLastName;
         Patient.Complaint = PatientCondition;
         var result = await GenericService.SaveAllAsync("api/AvanPharmacy/SavePatient", Patient);
         sale.Patient = result;
         sale.PatientId = sale.Patient.Id;
-        sale.DrugId = selectedDrug.Id;
         sale.PrescribedBy = pharmacist.Id;
+        sale.StockCategoryId = selectedCategory.Id;
         sale.Patient = null;
         sale.Drug = null;
+        sale.Cosmetic = null;
         sale.Date = date;
-        double? Amount = drugs.Where(x => x.Id == sale.DrugId).Select(x => x.Price).FirstOrDefault();
-        sale.saleAmout = Convert.ToDouble(Amount * Quantity);
+        @if (sale.DrugId != null)
+        {
+            double? DrugAmount = drugs.Where(x => x.Id == sale.DrugId).Select(x => x.Price).FirstOrDefault();
+            sale.saleAmout = Convert.ToDouble(DrugAmount * Quantity);
+        }
+        else if (sale.CosmeticId != null)
+        {
+            double? CosmeticAmount = _cosmeticsStocks.Where(x => x.Id == sale.CosmeticId).Select(x => x.Price).FirstOrDefault();
+            sale.saleAmout = Convert.ToDouble(CosmeticAmount * Quantity);
+        }
+
         sale.Quantity = Quantity;
+
         await GenericService.SaveAllAsync("api/AvanPharmacy/SaveSale", sale);
         Snackbar.Add("Transaction Added Successfully", Severity.Success);
 
 
     }
+    protected void DrugSale()
+    {
+        notDrug = true;
 
+    }
     #region String Functions
     protected Func<DrugStockTable, string> Drugsconverter = p => p.DrugName;
     protected Func<EmployeesTable, string> Employeesconverter = p => p.LastName;
+    protected Func<StockCategoryTable, string> Categoryconverter = p => p.StockCategoryName;
+    protected Func<Drugcategory, string> DrugCategoryconverter = p => p.DrugCategoryName;
+    protected Func<CosmeticsStockTable, string> Cosmeticconverter = p => p.CosmeticName;
+
+    #endregion
+
+    #region Cascade
+    protected async Task OnDrugCateforySelected()
+    {
+        drugs.Clear();
+        DrugName = string.Empty;
+        DrugCategoryId = drugcategory.Id;
+        DrugCategoryName = _drugcategories.FirstOrDefault(s => s.Id == DrugCategoryId).DrugCategoryName;
+        var res = await GenericService.GetAllAsync<DrugStockTable>($"api/AvanPharmacy/GetDrugsByDrugCategory/{DrugCategoryId}");
+        drugs = res.ToList();
+        StateHasChanged();
+    }
+    protected async Task GetCosmetics()
+    {
+        if (selectedCategory.StockCategoryName == "Cosmetics")
+        {
+            var res = await GenericService.GetAllAsync<CosmeticsStockTable>("api/AvanPharmacy/GetCosmetics");
+            _cosmeticsStocks = res.ToList();
+
+        }
+    }
     #endregion
 }

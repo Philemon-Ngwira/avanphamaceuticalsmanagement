@@ -14,9 +14,15 @@ public partial class avanpharmacyDbContext : DbContext
     {
     }
 
+    public virtual DbSet<AgrovetStockTable> AgrovetStockTables { get; set; }
+
+    public virtual DbSet<CosmeticsStockTable> CosmeticsStockTables { get; set; }
+
     public virtual DbSet<DeviceCode> DeviceCodes { get; set; }
 
     public virtual DbSet<DrugStockTable> DrugStockTables { get; set; }
+
+    public virtual DbSet<Drugcategory> Drugcategories { get; set; }
 
     public virtual DbSet<EmployeesTable> EmployeesTables { get; set; }
 
@@ -26,15 +32,37 @@ public partial class avanpharmacyDbContext : DbContext
 
     public virtual DbSet<PharmacyTransactionsTable> PharmacyTransactionsTables { get; set; }
 
+    public virtual DbSet<StockCategoryTable> StockCategoryTables { get; set; }
+
+    public virtual DbSet<StockTable> StockTables { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<DrugStockTable>(entity =>
+        {
+            entity.HasOne(d => d.DrugCatNavigation).WithMany(p => p.DrugStockTables).HasConstraintName("FK_DrugStockTable_Drugcategories");
+        });
+
         modelBuilder.Entity<PharmacyTransactionsTable>(entity =>
         {
+            entity.HasOne(d => d.Agrovet).WithMany(p => p.PharmacyTransactionsTables).HasConstraintName("FK_PharmacyTransactionsTable_AgrovetStockTable");
+
+            entity.HasOne(d => d.Cosmetic).WithMany(p => p.PharmacyTransactionsTables).HasConstraintName("FK_PharmacyTransactionsTable_CosmeticsStockTable");
+
+            entity.HasOne(d => d.DrugCategory).WithMany(p => p.PharmacyTransactionsTables).HasConstraintName("FK_PharmacyTransactionsTable_Drugcategories");
+
             entity.HasOne(d => d.Drug).WithMany(p => p.PharmacyTransactionsTables).HasConstraintName("FK_PharmacyTransactionsTable_DrugStockTable");
 
             entity.HasOne(d => d.Patient).WithMany(p => p.PharmacyTransactionsTables).HasConstraintName("FK_PharmacyTransactionsTable_PatientsTable");
 
             entity.HasOne(d => d.PrescribedByNavigation).WithMany(p => p.PharmacyTransactionsTables).HasConstraintName("FK_PharmacyTransactionsTable_PharmacyTransactionsTable");
+
+            entity.HasOne(d => d.StockCategory).WithMany(p => p.PharmacyTransactionsTables).HasConstraintName("FK_PharmacyTransactionsTable_StockCategoryTable");
+        });
+
+        modelBuilder.Entity<StockTable>(entity =>
+        {
+            entity.HasOne(d => d.CategoryNavigation).WithMany(p => p.StockTables).HasConstraintName("FK_StockTable_StockCategoryTable");
         });
 
         OnModelCreatingPartial(modelBuilder);

@@ -1,28 +1,29 @@
 ﻿@using avanphamaceuticalsmanagement.Client.Shared.Theme;
 @inherits LayoutComponentBase
 
-<MudThemeProvider Theme="theme"  IsDarkMode = "isDarkMode"/>
+<MudThemeProvider Theme="theme" IsDarkMode="isDarkMode" />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
 <MudLayout>
     <MudAppBar Fixed="true" Elevation="2">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu"  Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudImage Alt="Logo" Src="/images/AvanPharmacyWhite.png" Width="100" Height="100"></MudImage>
         Avan Pharmaceuticals
-        <MudSpacer /> 
+        <MudSpacer />
         <MudSwitch @bind-Checked="@isDarkMode" ThumbIcon="@(isDarkMode==true ? Icons.Material.Outlined.DarkMode : Icons.Material.Outlined.LightMode)" ThumbIconColor="@(isDarkMode==true ? Color.Dark : Color.Primary)">Theme</MudSwitch>
-        
+
         <LoginDisplay />
     </MudAppBar>
     <MudDrawer @bind-Open="@_drawerOpen" ClipMode="DrawerClipMode.Docked">
-        <NavMenu/>
+        <NavMenu />
     </MudDrawer>
     <MudMainContent>
         @Body
     </MudMainContent>
 </MudLayout>
 @code {
-    public AvanPharmacyTheme theme = new(); 
+    public AvanPharmacyTheme theme = new();
     bool _drawerOpen = true;
     bool isDarkMode;
 
@@ -31,5 +32,5 @@
         _drawerOpen = !_drawerOpen;
     }
 
-   
+
 }
