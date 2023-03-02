@@ -9,9 +9,11 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Management
     public partial class DrugManagement
     {
         protected IList<DrugStockTable> drugs = new List<DrugStockTable>();
+        protected IList<StockCategoryTable> categories = new List<StockCategoryTable>();
         protected string searchString1 = string.Empty;
         protected DrugStockTable selectedItem = new();
         protected DrugStockTable stockTable = new();
+        protected StockCategoryTable stockCategoryTable = new();
         protected bool openeditdrawer;
         //Injects
         [Inject]
@@ -30,9 +32,16 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Management
             var result = await _genericService.GetAllAsync<DrugStockTable>("api/AvanPharmacy/GetDrugs");
             drugs = result.ToList();
         }
-
+        protected async Task GetCategories()
+        {
+            var result = await _genericService.GetAllAsync<StockCategoryTable>("api/AvanPharmacy/GetCategories");
+            categories = result.ToList();
+        }
         #endregion
-
+        protected async Task GetDetailsForRequest()
+        {
+            await GetCategories();
+        }
         #region Search Function
 
         private bool FilterFunc1(DrugStockTable element) => FilterFunc(element, searchString1);
@@ -103,6 +112,10 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Management
             }
         }
 
+        #endregion
+
+        #region string Functions
+        protected Func<StockCategoryTable, string> Categoryconverter = p => p.StockCategoryName;
         #endregion
     }
 }

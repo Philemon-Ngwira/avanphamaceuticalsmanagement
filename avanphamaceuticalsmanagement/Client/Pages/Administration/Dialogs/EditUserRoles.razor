@@ -1,0 +1,51 @@
+﻿@using Microsoft.AspNet.Identity.EntityFramework;
+@inherits Admin
+<MudDialog>
+    <DialogContent>
+        <MudGrid>
+            <MudItem xs="12" md="6">
+                <MudTextField @bind-Value="User.Id" ReadOnly="true" Label="User Id" AdornmentIcon="@Icons.Material.Filled.PermIdentity" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField @bind-Value="User.UserName" ReadOnly="true" Label="UserName" AdornmentIcon="@Icons.Material.Filled.Person" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField @bind-Value="User.Email" ReadOnly="true" Label="Email" AdornmentIcon="@Icons.Material.Filled.Email" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" md="6">
+               <MudSelect T="string" @bind-Value="viewModel.RoleName" Variant="Variant.Outlined" Margin="Margin.Dense">
+                   @foreach (var item in roles)
+                    {
+                        <MudSelectItem T="string" Value="item">@item</MudSelectItem>
+                    }
+               </MudSelect>
+            </MudItem>
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButtonGroup OverrideStyles="false">
+            <MudButton ButtonType="ButtonType.Button" StartIcon="@Icons.Material.Filled.Cancel" Color="Color.Error" Variant="Variant.Filled" OnClick="CloseDialog">Cancel</MudButton>
+            <MudButton ButtonType="ButtonType.Button" StartIcon="@Icons.Material.Filled.Save" Color="Color.Success" Variant="Variant.Filled" OnClick="async () => await UpdateUser(User.Id,viewModel)">Submit</MudButton>
+        </MudButtonGroup>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [Parameter]public IdentityUser User { get; set; } = new();
+    protected UserViewModel viewModel = new();
+    [Inject] HttpClient HttpClient { get; set; }
+
+
+    protected async Task UpdateUser(string id, UserViewModel user)
+    {
+        user.UserName = User.UserName;
+        user.Id = User.Id;
+        user.Email = User.Email;
+        user.Roles = roles;
+        await HttpClient.PutAsJsonAsync($"api/Admin/{id}/roles", user.Roles);
+        Snackbar.Add("Successfully Updated", Severity.Success);
+        CloseDialog();
+        await GetAllUsersAsync();
+
+    }
+}

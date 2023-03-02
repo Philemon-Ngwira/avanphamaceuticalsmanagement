@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Identity;
 using AvanPharmacyDomain.Interfaces;
 using AvanPharmacyDomain.Repositories;
 using AvanPharmacyDomain.Data;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace avanphamaceuticalsmanagement
 {
@@ -21,15 +23,26 @@ namespace avanphamaceuticalsmanagement
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
+            //builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+            //    .AddEntityFrameworkStores<ApplicationDbContext>()
+            //    .AddRoleManager<RoleManager<IdentityRole>>()
+            //    .AddDefaultTokenProviders();
             builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddRoles<IdentityRole>()
+                .AddRoleManager<RoleManager<IdentityRole>>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-
+            //builder.Services.AddTransient<IEmailSender>();
             builder.Services.AddDbContext<avanpharmacyDbContext>(options => options.UseSqlServer(connectionString));
 
 
             builder.Services.AddIdentityServer()
-                .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+                .AddApiAuthorization<ApplicationUser, ApplicationDbContext>(opt =>
+                {
+                    opt.IdentityResources["openid"].UserClaims.Add("role");
+                    opt.ApiResources.Single().UserClaims.Add("role");
+                }
+                );
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("role");
 
             builder.Services.AddAuthentication()
                 .AddIdentityServerJwt();
@@ -38,7 +51,7 @@ namespace avanphamaceuticalsmanagement
             builder.Services.AddSwaggerGen();
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
-          
+
             var app = builder.Build();
             app.UseSwagger();
             app.UseSwaggerUI(c =>

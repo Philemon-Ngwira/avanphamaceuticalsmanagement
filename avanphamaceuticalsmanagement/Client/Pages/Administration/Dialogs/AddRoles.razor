@@ -1,0 +1,26 @@
+﻿@inherits Admin
+<MudDialog>
+    <DialogContent>
+        <MudTextField Variant="Variant.Outlined" Margin="Margin.Dense" @bind-Value ="roleName" T="string" Placeholder="Enter Role Name" Label="Role Name"></MudTextField>
+    </DialogContent>
+    <DialogActions>
+        <MudButtonGroup OverrideStyles="false">
+            <MudButton ButtonType="ButtonType.Button" StartIcon="@Icons.Material.Filled.Cancel" Color="Color.Error" Variant="Variant.Filled" OnClick="CloseDialog">Cancel</MudButton>
+            <MudButton ButtonType="ButtonType.Button" StartIcon="@Icons.Material.Filled.Save" Color="Color.Success" Variant="Variant.Filled" OnClick="SaveRole">Submit</MudButton>
+        </MudButtonGroup>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    public string roleName = string.Empty;
+    [Inject] HttpClient HttpClient { get; set; }
+
+    protected async Task SaveRole()
+    {
+        await HttpClient.PostAsJsonAsync("api/Admin/SaveRole", roleName);
+        Snackbar.Add("Successfully Added", Severity.Success);
+        await LoadRoles();
+        CloseDialog();
+
+    }
+}

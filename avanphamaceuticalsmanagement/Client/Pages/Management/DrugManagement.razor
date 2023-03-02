@@ -59,10 +59,21 @@
                 </MudGrid>
 
             </MudTabPanel>
-            <MudTabPanel Icon="@Icons.Material.Filled.Storage" Text="Request Restock">
+            <MudTabPanel Icon="@Icons.Material.Filled.Storage" Text="Request Restock" OnClick="GetDetailsForRequest">
              <MudGrid>
                  <MudItem xs="12">
                      <MudAlert Icon="@Icons.Material.Filled.ShortText" Severity="Severity.Warning">Enter Required Information to request!</MudAlert>
+                 </MudItem>
+                 <MudItem xs="12" md="6">
+                     <MudSelect Label="Request Category" @bind-Value="stockCategoryTable" ToStringFunc="Categoryconverter" T="StockCategoryTable" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" Clearable = "true" TransformOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Margin="Margin.Dense">
+                         @foreach (var item in categories)
+                            {
+                                <MudSelectItem T="StockCategoryTable" Value="item">@item.StockCategoryName</MudSelectItem>
+                            }
+                     </MudSelect>
+                 </MudItem>
+                 <MudItem xs="12" md="6">
+
                  </MudItem>
              </MudGrid>
             </MudTabPanel>

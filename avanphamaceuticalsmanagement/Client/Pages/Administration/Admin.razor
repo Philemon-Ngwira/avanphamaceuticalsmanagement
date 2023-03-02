@@ -1,0 +1,64 @@
+﻿@page "/Admin"
+
+<MudCard Class="mb-3">
+    <MudCardHeader>
+        <MudText Typo="Typo.h5" Align="Align.Center"><b>Administration</b></MudText>
+    </MudCardHeader>
+    <MudDivider />
+    <MudAlert Icon="@Icons.Material.Filled.VerifiedUser" Severity="Severity.Warning">
+        <MudText Align="Align.Left" Typo="Typo.subtitle1">You are looking at the administrator Page @name Please Confirm All Changes!</MudText>
+    </MudAlert>
+    <MudDivider />
+    <MudCardContent>
+        <MudGrid>
+            <MudItem xs="12">
+                <MudTable Items="@Users" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="Color.Info">
+                    <ToolBarContent>
+                        <MudText Typo="Typo.h6">Current Users</MudText>
+                    </ToolBarContent>
+                    <HeaderContent>
+                        <MudTh>Id</MudTh>
+                        <MudTh>UserName</MudTh>
+                        <MudTh>Email</MudTh>
+                        <MudTh>Role</MudTh>
+                        <MudTh>Action</MudTh>
+
+                    </HeaderContent>
+                    <RowTemplate>
+
+                        <MudTd DataLabel="Id">@context.Id</MudTd>
+                        <MudTd DataLabel="UserName">@context.UserName</MudTd>
+                        <MudTd DataLabel="Email">@context.Email</MudTd>
+                        <MudTd DataLabel="Role"> @string.Join(", ", context.Roles)</MudTd>
+
+                        <MudTd DataLabel="Action"><MudFab Size="Size.Small" Color="Color.Warning" Icon="@Icons.Material.Filled.Update" OnClick="() => EditUserRoles(context.Id)"></MudFab><MudFab Size="Size.Small" Color="Color.Error" Icon="@Icons.Material.Filled.DeleteForever" OnClick="() => DeleteUser(context.Id)"></MudFab></MudTd>
+                    </RowTemplate>
+                </MudTable>
+            </MudItem>
+        </MudGrid>
+        <MudDivider />
+        <MudSpacer />
+        <MudAlert Icon="@Icons.Material.Filled.Info" Severity="Severity.Info">
+            <MudText Align="Align.Left" Typo="Typo.subtitle1">Current Available Roles</MudText>
+        </MudAlert>
+        <MudDivider />
+        <MudSpacer />
+        <MudItem xs="12">
+            <MudTable Items="@roles" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
+                <ToolBarContent>
+                    <MudText Typo="Typo.h6">Current Roles</MudText>
+                    <MudSpacer />
+                    <MudButton ButtonType="ButtonType.Button" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled" OnClick="AddRole">Add Role</MudButton>
+                </ToolBarContent>
+                <HeaderContent>
+                    <MudTh>Role Name</MudTh>
+
+                </HeaderContent>
+                <RowTemplate>
+
+                    <MudTd DataLabel="RoleName">@context</MudTd>
+                </RowTemplate>
+            </MudTable>
+        </MudItem>
+    </MudCardContent>
+</MudCard>
