@@ -35,7 +35,25 @@ namespace AvanPharmacyDomain.Repositories
                 throw;
             }
         }
-
+        public async Task<IEnumerable<RestockRequestsTable>> GetRestockRequests()
+        {
+            try
+            {
+                var result = await _dbContext.RestockRequestsTables
+                    .Include(x=>x.RequestCategory)
+                    .Include(x=>x.RequestCosmetic)
+                    .Include(x=>x.RequestDrugCategory)
+                    .Include(x=>x.RequestDrug)
+                    .Include(x=>x.StatusNavigation)
+                    .ToListAsync();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                var _ = ex.Message;
+                throw;
+            }
+        }
         public IEnumerable<DrugStockTable> GetDrugsByDCIdAsync(int DCid)
 
         {

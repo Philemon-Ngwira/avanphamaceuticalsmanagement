@@ -43,4 +43,7 @@ public partial class DrugStockTable
 
     [InverseProperty("Drug")]
     public virtual ICollection<PharmacyTransactionsTable> PharmacyTransactionsTables { get; } = new List<PharmacyTransactionsTable>();
+
+    [InverseProperty("RequestDrug")]
+    public virtual ICollection<RestockRequestsTable> RestockRequestsTables { get; } = new List<RestockRequestsTable>();
 }

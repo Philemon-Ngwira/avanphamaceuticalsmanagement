@@ -63,7 +63,19 @@ namespace avanphamaceuticalsmanagement.Server.Controllers
             var cosmetic = await AvanPharmacyRepository.GetAsync<CosmeticsStockTable>();
             return Ok(cosmetic);
         }
-        //Get By ID
+        [HttpGet("GetRestockRequests")]
+        public async Task<IActionResult> GetRestockRequest()
+        {
+            var request = await AvanPharmacyRepository.GetRestockRequests();
+            return Ok(request);
+        }
+        [HttpGet("GetRestockRequestsDashboard")]
+        public async Task<IActionResult> GetRequestCount()
+        {
+            var cosmetic = await AvanPharmacyRepository.GetAsync<RestockRequestsTable>();
+            return Ok(cosmetic);
+        }
+        //Get By ID 
 
         [HttpGet]
         [Route("GetDrugsByDrugCategory/{id}")]
@@ -81,6 +93,12 @@ namespace avanphamaceuticalsmanagement.Server.Controllers
         public async Task<IActionResult> SaveDrugs(DrugStockTable drugStock)
         {
             var result = await AvanPharmacyRepository.SaveAllAsync(drugStock);
+            return Ok(result);
+        }
+        [HttpPost("SaveRestockRequest")]
+        public async Task<IActionResult> SaveRestockRequest(RestockRequestsTable Stock)
+        {
+            var result = await AvanPharmacyRepository.SaveAllAsync(Stock);
             return Ok(result);
         }
         [HttpPost("SavePatient")]
@@ -105,6 +123,13 @@ namespace avanphamaceuticalsmanagement.Server.Controllers
             var result =  await AvanPharmacyRepository.updateAsync(drugStock);
             return Ok(result);
         }
+        [HttpPut("UpdateRestockRequest")]
+        public async Task<IActionResult> UpdateRestockRequest(RestockRequestsTable drugStock)
+        {
+            var result = await AvanPharmacyRepository.updateAsync(drugStock);
+            return Ok(result);
+        }
+        //
         #endregion
 
         #region Delete

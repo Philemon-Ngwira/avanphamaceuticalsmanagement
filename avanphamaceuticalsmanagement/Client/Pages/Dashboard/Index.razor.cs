@@ -3,14 +3,13 @@ using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
 using avanphamaceuticalsmanagement.Client.Services.Interfaces;
 using avanphamaceuticalsmanagement.Shared.Models;
-using System.Diagnostics;
-using avanphamaceuticalsmanagement.Client.Services;
+using System.Globalization;
 
 namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
 {
-    public partial class Index
+    public partial class IndexBase : ComponentBase
     {
-        private int LineIndex = -1; //default value cannot be 0 -> first selectedindex is 0.
+        protected int LineIndex = -1; //default value cannot be 0 -> first selectedindex is 0.
         [Inject]
         AuthenticationStateProvider AuthenticationStateProvider { get; set; }
 
@@ -23,6 +22,7 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
         protected IList<EmployeesTable> employees = new List<EmployeesTable>();
         protected IList<PharmacyTransactionsTable> _sales = new List<PharmacyTransactionsTable>();
         protected IList<StockCategoryTable> stockCategories = new List<StockCategoryTable>();
+        public IList<RestockRequestsTable> _restockRequests = new List<RestockRequestsTable>();
         protected int? drugStock = 0;
         protected string SalesError = string.Empty;
         protected double? totalRevenue = 0;
@@ -30,12 +30,28 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
         protected double[] donutdata;
         protected string[] labels;
         protected List<string> names = new();
-        string formattedRevenueValue;
+        protected string formattedRevenueValue;
+        protected string RoleName;
+        public int numberofRequests = 0;
+        protected MudListItem trajectoryItem = new MudListItem();
+        protected bool isBetterThanLastMonth;
+        protected double percentage;
+        protected string percentageChangeString;
         protected override async Task OnInitializedAsync()
         {
             var auth = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             var user = auth.User;
             name = user.Identity.Name;
+            if (user.IsInRole("Admin"))
+            {
+                RoleName = "Administrator";
+                await GetApprovalRequests();
+
+            }
+            else if (user.IsInRole("Employee"))
+            {
+                RoleName = "Employee";
+            }
             await GetAllPatients();
             await GetAllEmployees();
             await GetAllDrugs();
@@ -43,6 +59,7 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
             await getStockCategories();
             await FillChart();
             await FillDonutChart();
+            await CalculateSalesTrajectory();
 
         }
 
@@ -53,7 +70,13 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
             var result = await _genericService.GetAllAsync<PatientsTable>("api/AvanPharmacy/GetPatients");
             _patients = result.ToList();
         }
-
+        protected async Task GetApprovalRequests()
+        {
+            var requests = await _genericService.GetAllAsync<RestockRequestsTable>("api/AvanPharmacy/GetRestockRequestsDashboard");
+            _restockRequests = requests.ToList();
+            numberofRequests = _restockRequests.Count;
+            StateHasChanged();
+        }
         protected async Task GetAllEmployees()
         {
             var result = await _genericService.GetAllAsync<EmployeesTable>("api/AvanPharmacy/GetAllEmployees");
@@ -85,7 +108,56 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
                 SalesError = "No sales Recorded Yet.";
             }
         }
+        protected async Task CalculateSalesTrajectory()
+        {
 
+            // Get the current month and year
+            DateTime now = DateTime.Now;
+            int currentMonth = now.Month;
+            int currentYear = now.Year;
+
+            // Find the sales amount for the current month
+            double currentSalesAmount = _sales.FirstOrDefault(s => s.Date.Value.Month == currentMonth && s.Date.Value.Year == currentYear)?.saleAmout ?? 0;
+
+            // Find the sales amount for the previous month
+            int previousMonth = currentMonth == 1 ? 12 : currentMonth - 1;
+            int previousYear = currentMonth == 1 ? currentYear - 1 : currentYear;
+            double previousSalesAmount = _sales.FirstOrDefault(s => s.Date.Value.Month == previousMonth && s.Date.Value.Year == previousYear)?.saleAmout ?? 0;
+
+            // Calculate the percentage increment or decrease
+            double percentageChange = 0;
+            if (previousSalesAmount == 0 && currentSalesAmount > 0)
+            {
+                percentageChange = 100;
+               
+            }
+            else if (previousSalesAmount != 0)
+            {
+                percentageChange = (double)(currentSalesAmount - previousSalesAmount) / previousSalesAmount * 100;
+            }
+
+            if (percentageChange == 100)
+            {
+                percentage = 100;
+                trajectoryItem.Icon = @Icons.Material.Filled.ArrowUpward;
+                trajectoryItem.IconColor = Color.Success;
+                percentageChangeString=percentage.ToString("0.00'%'", CultureInfo.InvariantCulture);
+            }
+            else if(currentSalesAmount < previousSalesAmount)
+            {
+                percentage = percentageChange;
+                trajectoryItem.Icon = @Icons.Material.Filled.TrendingDown;
+                trajectoryItem.IconColor = Color.Error;
+                percentageChangeString = percentage.ToString("0.00'%'", CultureInfo.InvariantCulture);
+            }
+            else if(currentSalesAmount > previousSalesAmount && percentageChange != 100)
+            {
+                percentage = percentageChange;
+                trajectoryItem.Icon = @Icons.Material.Filled.TrendingUp;
+                trajectoryItem.IconColor = Color.Success;
+                percentageChangeString = percentage.ToString("0.00'%'", CultureInfo.InvariantCulture);
+            }
+        }
         #endregion
         #region Line Chart
         public List<ChartSeries> MonthlySales = new List<ChartSeries>();
@@ -141,8 +213,8 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
         protected async Task FillDonutChart()
         {
             donutdata = new double[_sales.Count];
-            labels =  new string[_sales.Count];
-           
+            labels = new string[_sales.Count];
+
             foreach (var item in _sales)
             {
                 item.StockCategory = stockCategories.Where(x => x.Id == item.StockCategoryId).FirstOrDefault();
@@ -150,12 +222,12 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
             for (int i = 0; i < _sales.Count; i++)
             {
                 PharmacyTransactionsTable sale = _sales[i];
-                
+
                 names.Add(sale.StockCategory.StockCategoryName);
                 labels = names.ToArray();
                 donutdata[i] = sale.saleAmout;
             }
-       
+
 
         }
 

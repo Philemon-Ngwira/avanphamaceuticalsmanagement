@@ -21,6 +21,9 @@ public partial class StockCategoryTable
     [InverseProperty("StockCategory")]
     public virtual ICollection<PharmacyTransactionsTable> PharmacyTransactionsTables { get; } = new List<PharmacyTransactionsTable>();
 
+    [InverseProperty("RequestCategory")]
+    public virtual ICollection<RestockRequestsTable> RestockRequestsTables { get; } = new List<RestockRequestsTable>();
+
     [InverseProperty("CategoryNavigation")]
     public virtual ICollection<StockTable> StockTables { get; } = new List<StockTable>();
 }

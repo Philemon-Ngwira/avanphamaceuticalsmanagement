@@ -13,7 +13,7 @@
                 <MudTextField @bind-Value="User.Email" ReadOnly="true" Label="Email" AdornmentIcon="@Icons.Material.Filled.Email" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
             </MudItem>
             <MudItem xs="12" md="6">
-               <MudSelect T="string" @bind-Value="viewModel.RoleName" Variant="Variant.Outlined" Margin="Margin.Dense">
+                <MudSelect T="string" @bind-Value="viewModel.RoleName" Variant="Variant.Outlined" Margin="Margin.Dense" Placeholder="Roles" Label="Select Role">
                    @foreach (var item in roles)
                     {
                         <MudSelectItem T="string" Value="item">@item</MudSelectItem>
@@ -41,9 +41,9 @@
         user.UserName = User.UserName;
         user.Id = User.Id;
         user.Email = User.Email;
-        user.Roles = roles;
+        user.Roles.Add(user.RoleName);
         await HttpClient.PutAsJsonAsync($"api/Admin/{id}/roles", user.Roles);
-        Snackbar.Add("Successfully Updated", Severity.Success);
+        Snackbar.Add($"{User.UserName} Successfully Added to Role {viewModel.RoleName}", Severity.Success);
         CloseDialog();
         await GetAllUsersAsync();
 

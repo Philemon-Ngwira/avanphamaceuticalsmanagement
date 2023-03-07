@@ -95,7 +95,7 @@ namespace avanphamaceuticalsmanagement.Server.Controllers
         }
 
 
-        [HttpPost("SaveRole")]
+        [HttpPost("SaveAllRoles")]
         public async Task<IActionResult> AddRole(string roleName)
         {
             try

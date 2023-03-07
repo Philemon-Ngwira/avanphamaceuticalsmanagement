@@ -32,6 +32,10 @@ public partial class avanpharmacyDbContext : DbContext
 
     public virtual DbSet<PharmacyTransactionsTable> PharmacyTransactionsTables { get; set; }
 
+    public virtual DbSet<RestockRequestsTable> RestockRequestsTables { get; set; }
+
+    public virtual DbSet<RestockStatusTable> RestockStatusTables { get; set; }
+
     public virtual DbSet<StockCategoryTable> StockCategoryTables { get; set; }
 
     public virtual DbSet<StockTable> StockTables { get; set; }
@@ -58,6 +62,19 @@ public partial class avanpharmacyDbContext : DbContext
             entity.HasOne(d => d.PrescribedByNavigation).WithMany(p => p.PharmacyTransactionsTables).HasConstraintName("FK_PharmacyTransactionsTable_PharmacyTransactionsTable");
 
             entity.HasOne(d => d.StockCategory).WithMany(p => p.PharmacyTransactionsTables).HasConstraintName("FK_PharmacyTransactionsTable_StockCategoryTable");
+        });
+
+        modelBuilder.Entity<RestockRequestsTable>(entity =>
+        {
+            entity.HasOne(d => d.RequestCategory).WithMany(p => p.RestockRequestsTables).HasConstraintName("FK_RestockRequestsTable_StockCategoryTable");
+
+            entity.HasOne(d => d.RequestCosmetic).WithMany(p => p.RestockRequestsTables).HasConstraintName("FK_RestockRequestsTable_CosmeticsStockTable");
+
+            entity.HasOne(d => d.RequestDrugCategory).WithMany(p => p.RestockRequestsTables).HasConstraintName("FK_RestockRequestsTable_Drugcategories");
+
+            entity.HasOne(d => d.RequestDrug).WithMany(p => p.RestockRequestsTables).HasConstraintName("FK_RestockRequestsTable_DrugStockTable");
+
+            entity.HasOne(d => d.StatusNavigation).WithMany(p => p.RestockRequestsTables).HasConstraintName("FK_RestockRequestsTable_RestockStatusTable");
         });
 
         modelBuilder.Entity<StockTable>(entity =>

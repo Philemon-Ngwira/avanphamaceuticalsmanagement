@@ -24,8 +24,9 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Administration
         [Inject] NavigationManager NavigationManager { get; set; }
         //[Inject] UserManager<IdentityUser> UserManager { get; set; }
         protected string User { get; set; }
-        protected UserViewModel UserViewModel { get; set; }
+        protected UserViewModel UserViewModel { get; set; } = new();
         protected IList<IdentityUser> Users { get; set; } = new List<IdentityUser>();
+        List<IdentityUser> usersInSelectedRole = new List<IdentityUser>(); 
         protected IList<string> roles = new List<string>();
         protected string name;
         protected bool _loading;
@@ -114,7 +115,10 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Administration
         protected void CloseDialog()
         {
             MudDialog.Close();
-            
+
         }
+
+    
+        
     }
 }

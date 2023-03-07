@@ -60,22 +60,98 @@
 
             </MudTabPanel>
             <MudTabPanel Icon="@Icons.Material.Filled.Storage" Text="Request Restock" OnClick="GetDetailsForRequest">
-             <MudGrid>
-                 <MudItem xs="12">
-                     <MudAlert Icon="@Icons.Material.Filled.ShortText" Severity="Severity.Warning">Enter Required Information to request!</MudAlert>
-                 </MudItem>
-                 <MudItem xs="12" md="6">
-                     <MudSelect Label="Request Category" @bind-Value="stockCategoryTable" ToStringFunc="Categoryconverter" T="StockCategoryTable" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" Clearable = "true" TransformOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Margin="Margin.Dense">
-                         @foreach (var item in categories)
+                <MudGrid>
+                    <MudItem xs="12">
+                        <MudAlert Icon="@Icons.Material.Filled.ShortText" Severity="Severity.Warning">Enter Required Information to request!</MudAlert>
+                    </MudItem>
+                    <MudItem xs="12" md="6">
+                        <MudSelect Label="Request Category" @bind-Value="stockCategoryTable" ToStringFunc="Categoryconverter" T="StockCategoryTable" SelectedValuesChanged="FindSelectedCategory" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" Clearable="true" TransformOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Margin="Margin.Dense">
+                            @foreach (var item in categories)
                             {
                                 <MudSelectItem T="StockCategoryTable" Value="item">@item.StockCategoryName</MudSelectItem>
                             }
-                     </MudSelect>
-                 </MudItem>
-                 <MudItem xs="12" md="6">
+                        </MudSelect>
+                    </MudItem>
+                    @if (stockCategoryTable.StockCategoryName == "Medicine")
+                    {
+                        <MudItem xs="12" md="6">
+                            <MudSelect Label="Request Drug Category" @bind-Value="drugcategory" ToStringFunc="DrugCategoryconverter" T="Drugcategory" Adornment="Adornment.End" SelectedValuesChanged="OnDrugCateforySelected" AdornmentIcon="@Icons.Material.Filled.Search" Clearable="true" TransformOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Margin="Margin.Dense">
+                                @foreach (var item in drugcategories)
+                                {
+                                    <MudSelectItem T="Drugcategory" Value="item">@item.DrugCategoryName</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudItem>
+                    }
+                    @if (drugcategory.DrugCategoryName != null)
+                    {
+                        <MudItem xs="12" md="6">
+                            <MudSelect Label="Select Drug" @bind-Value="RequestedDrug" ToStringFunc="Drugconverter" T="DrugStockTable" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" Clearable="true" TransformOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Margin="Margin.Dense">
+                                @foreach (var item in drugs)
+                                {
+                                    <MudSelectItem T="DrugStockTable" Value="item">@item.DrugName @item.Unit</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudItem>
+                    }
 
-                 </MudItem>
-             </MudGrid>
+                    @if (stockCategoryTable.StockCategoryName == "Agrovet")
+                    {
+                        <MudItem xs="12" md="6">
+                            <MudSelect Label="Select " @bind-Value="RequestedDrug" ToStringFunc="Drugconverter" T="DrugStockTable" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" Clearable="true" TransformOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Margin="Margin.Dense">
+                                @foreach (var item in drugs)
+                                {
+                                    <MudSelectItem T="DrugStockTable" Value="item">@item.DrugName @item.Unit</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudItem>
+                    }
+                    @if (stockCategoryTable.StockCategoryName == "Baby Products")
+                    {
+                        <MudItem xs="12" md="6">
+                            <MudSelect Label="Select " @bind-Value="RequestedDrug" ToStringFunc="Drugconverter" T="DrugStockTable" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" Clearable="true" TransformOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Margin="Margin.Dense">
+                                @foreach (var item in drugs)
+                                {
+                                    <MudSelectItem T="DrugStockTable" Value="item">@item.DrugName @item.Unit</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudItem>
+                    }
+                    @if (stockCategoryTable.StockCategoryName == "Medical Accessories")
+                    {
+                        <MudItem xs="12" md="6">
+                            <MudSelect Label="Select " @bind-Value="RequestedDrug" ToStringFunc="Drugconverter" T="DrugStockTable" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" Clearable="true" TransformOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Margin="Margin.Dense">
+                                @foreach (var item in drugs)
+                                {
+                                    <MudSelectItem T="DrugStockTable" Value="item">@item.DrugName @item.Unit</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudItem>
+                    }
+                    @if (stockCategoryTable.StockCategoryName == "Cosmetics")
+                    {
+                        <MudItem xs="12" md="6">
+                            <MudSelect Label="Select " @bind-Value="Cosmetics" ToStringFunc="Cosmeticconverter" T="CosmeticsStockTable" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" Clearable="true" TransformOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Margin="Margin.Dense">
+                                @foreach (var item in _cosmeticsStocks)
+                                {
+                                    <MudSelectItem T="CosmeticsStockTable" Value="item">@item.CosmeticName @item.Unit</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudItem>
+                    }
+
+
+                    <MudItem xs="12" md="6">
+                        <MudNumericField T="int" Label="Quantity"  Variant="Variant.Outlined" Margin="Margin.Dense" Placeholder="Enter Quantity" Required="true" ValueChanged="RequestQuantityEntered"></MudNumericField>
+                    </MudItem>
+                    <MudItem xs="12" md="6">
+                       <MudAlert Severity="Severity.Warning" Icon="@Icons.Material.Filled.PriceCheck"><MudText Typo="Typo.subtitle1">Price: ZMW @price </MudText></MudAlert>
+                    </MudItem>
+                     <MudItem xs="12">
+                         <MudButton ButtonType="ButtonType.Button" Color="Color.Success" StartIcon="@Icons.Material.Filled.SendAndArchive" Variant="Variant.Filled" FullWidth="true" OnClick="SaveRestockRequest">Submit</MudButton>
+                     </MudItem>
+                </MudGrid>
+                
             </MudTabPanel>
 
         </MudTabs>

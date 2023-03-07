@@ -8,21 +8,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace avanphamaceuticalsmanagement.Shared.Models;
 
-public partial class Drugcategory
+[Table("RestockStatusTable")]
+public partial class RestockStatusTable
 {
     [Key]
     public int Id { get; set; }
 
     [StringLength(50)]
     [Unicode(false)]
-    public string DrugCategoryName { get; set; }
+    public string Status { get; set; }
 
-    [InverseProperty("DrugCatNavigation")]
-    public virtual ICollection<DrugStockTable> DrugStockTables { get; } = new List<DrugStockTable>();
-
-    [InverseProperty("DrugCategory")]
-    public virtual ICollection<PharmacyTransactionsTable> PharmacyTransactionsTables { get; } = new List<PharmacyTransactionsTable>();
-
-    [InverseProperty("RequestDrugCategory")]
+    [InverseProperty("StatusNavigation")]
     public virtual ICollection<RestockRequestsTable> RestockRequestsTables { get; } = new List<RestockRequestsTable>();
 }

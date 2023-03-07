@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
+using avanphamaceuticalsmanagement.Client.Pages.Dashboard;
 
 namespace avanphamaceuticalsmanagement.Client
 {
@@ -24,9 +25,11 @@ namespace avanphamaceuticalsmanagement.Client
             // Supply HttpClient instances that include access tokens when making requests to the server project
             builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("avanphamaceuticalsmanagement.ServerAPI"));
 
-           
+
 
             builder.Services.AddScoped<IGenericService, GenericService>();
+            builder.Services.AddScoped<IRolesService, RolesService>();
+            builder.Services.AddScoped<IndexBase>();
             builder.Services.AddMudServices();
             builder.Services.AddApiAuthorization();
 

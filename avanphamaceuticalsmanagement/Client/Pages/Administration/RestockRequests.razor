@@ -1,0 +1,90 @@
+﻿@page "/RequestsForApproval"
+@using System.Reflection;
+@using avanphamaceuticalsmanagement.Client.Services.Interfaces;
+@using avanphamaceuticalsmanagement.Shared.Models;
+
+<MudPaper>
+    <MudCard>
+        <MudCardHeader>
+            <MudText Typo="Typo.h6"><b>Requests For Approver</b></MudText>
+        </MudCardHeader>
+        <MudCardContent>
+            <style>
+                .mud-table-cell-custom-group {
+                    font-weight: 500;
+                }
+
+                .mud-table-cell-custom-group-footer {
+                    padding-bottom: 50px;
+                    text-align: right;
+                }
+            </style>
+
+            <MudTable Hover="true" Breakpoint="Breakpoint.Sm" Height="500px" FixedHeader="true"
+                      Items="@_restockRequests"
+                      GroupBy="@_groupDefinition"
+                      GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
+                      GroupFooterClass="mb-4"
+                      Dense="true">
+                <ColGroup>
+                    <col style="width: 60px;" />
+                    <col />
+                    <col />
+                    <col />
+                    <col />
+                    <col />
+                </ColGroup>
+                <HeaderContent>
+
+                    <MudTh>Requester</MudTh>
+                    <MudTh>Stock Category</MudTh>
+                    <MudTh>Item Category</MudTh>
+                    <MudTh>Item</MudTh>
+                    <MudTh>Quantity</MudTh>
+                    <MudTh>status</MudTh>
+                    <MudTh>Action</MudTh>
+                </HeaderContent>
+                <GroupHeaderTemplate>
+                    <MudTh Class="mud-table-cell-custom-group" colspan="5">@($"{context.GroupName}: {context.Key}")</MudTh>
+                    </GroupHeaderTemplate>
+                    <RowTemplate>
+                        <MudTd DataLabel="Requester">@context.Requester</MudTd>
+                        @if (context.RequestCategory != null)
+                    {
+                        <MudTd DataLabel="Stock Category">@context.RequestCategory.StockCategoryName</MudTd>
+                    }
+                    @if (context.RequestDrugCategory != null)
+                    {
+                        <MudTd DataLabel="Item Category">@context.RequestDrugCategory.DrugCategoryName</MudTd>
+                    }
+                    @if (context.RequestDrugCategory != null)
+                    {
+                        <MudTd DataLabel="Item">@context.RequestDrug.DrugName</MudTd>
+                    }
+                    @if (context.RequestCosmetic != null)
+                    {
+                        <MudTd DataLabel="Item">@context.RequestCosmetic.CosmeticName</MudTd>
+                    }
+                    @if (context.Quantity != null)
+                    {
+                        <MudTd DataLabel="Quantity">@context.Quantity</MudTd>
+                    }
+                    <MudTd Style="text-align: right" DataLabel="status">@context.StatusNavigation.Status"</MudTd>
+                    <MudTd DataLabel="Action">
+                        <MudButton>
+                            <MudFab Icon="@Icons.Material.Filled.Preview" Size="Size.Small" Color="Color.Warning"></MudFab>
+                            <MudFab Icon="@Icons.Material.Filled.Check" Size="Size.Small" Color="Color.Success" OnClick="() => HandleApprovals(context.Id)"></MudFab>
+                            <MudFab Icon="@Icons.Material.Filled.Cancel" Size="Size.Small" Color="Color.Error" OnClick="() => HandleRejects(context.Id)"></MudFab>
+                        </MudButton>
+                    </MudTd>
+                </RowTemplate>
+                <GroupFooterTemplate>
+                    <MudTh Class="mud-table-cell-custom-group mud-table-cell-custom-group-footer" colspan="5">Total Requests: @context.Items.Sum((e) => e.Id)</MudTh>
+                </GroupFooterTemplate>
+            </MudTable>
+        </MudCardContent>
+    </MudCard>
+</MudPaper> r
+
+
+

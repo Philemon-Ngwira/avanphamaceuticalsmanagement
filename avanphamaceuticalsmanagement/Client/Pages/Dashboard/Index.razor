@@ -3,6 +3,7 @@
 @using avanphamaceuticalsmanagement.Client.Services.Interfaces;
 @using avanphamaceuticalsmanagement.Shared.Models;
 @attribute [Authorize]
+@inherits IndexBase
 <MudCard Class="mb-3">
     <MudCardHeader>
 
@@ -12,7 +13,7 @@
             </div>
             <div>
                 <MudAlert Icon="@Icons.Material.Filled.Info">
-                    <MudText Align="Align.Left">Hello @name!, Welcome to Avan Pharmaceuticals Management Portal </MudText>
+                    <MudText Align="Align.Left">Hello @name!, Welcome to Avan Pharmaceuticals Management Portal! Your Role is @RoleName </MudText>
                 </MudAlert>
             </div>
             <MudDivider>
@@ -21,6 +22,21 @@
             <MudText Align="Align.Left" Typo="Typo.subtitle1"><b>Dashboard</b></MudText>
             <MudDivider />
             <MudGrid>
+                <MudItem xs="12">
+                    <MudCard>
+                        <MudCardHeader>
+                            <CardHeaderContent>
+                                <MudText Typo="Typo.h6"><b>Sales Trajectory</b></MudText>
+                                <MudList>
+                                    <MudListItem @ref="@trajectoryItem" Text="@percentageChangeString"/>
+                                </MudList>
+                            </CardHeaderContent>
+                        </MudCardHeader>
+                    </MudCard>
+                   <MudCardContent>
+
+                   </MudCardContent>
+                </MudItem>
                 <MudItem xs="12" md="3">
                     <MudCard Elevation="2" Square="false" Class="mb-3">
                         <MudCardHeader>

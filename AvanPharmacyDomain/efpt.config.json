@@ -51,6 +51,14 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[RestockRequestsTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[RestockStatusTable]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[StockCategoryTable]",
          "ObjectType": 0
       },

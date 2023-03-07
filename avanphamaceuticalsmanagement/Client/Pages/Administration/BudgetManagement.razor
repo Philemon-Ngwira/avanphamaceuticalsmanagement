@@ -1,0 +1,72 @@
+﻿@page "/Budgets"
+
+<MudCard Class="mb-3">
+    <MudCardHeader>
+        <MudText Align="Align.Left" Typo="Typo.h6"><b>Add Manage Budgets</b></MudText>
+    </MudCardHeader>
+    <MudCardContent>
+        <div class="mb-6">
+            <MudAlert Icon="fa-solid fa-exclamation" Severity="Severity.Info">Select Task below</MudAlert>
+            <MudDivider />
+            <MudSpacer />
+        </div>
+
+        <MudGrid Class="mb-3">
+            <MudItem xs="12" md="6">
+                <MudCard Elevation="2" Square="false" Class="mb-3">
+                    <MudCardHeader>
+                        <MudText Align="Align.Center" Typo="Typo.subtitle1"><b>Add New Budget</b></MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudButton ButtonType="ButtonType.Button" StartIcon="@Icons.Material.Filled.Add" FullWidth="true" Variant="Variant.Filled" Color="Color.Info" OnClick="GetAddBudgetForm">New Budget</MudButton>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudCard Elevation="2" Square="false" Class="mb-3">
+                    <MudCardHeader>
+                        <MudText Align="Align.Center" Typo="Typo.subtitle1"><b>Manage Existing Budget</b></MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudButton ButtonType="ButtonType.Button" StartIcon="@Icons.Material.Filled.Add" FullWidth="true" Variant="Variant.Filled" Color="Color.Info">New Budget</MudButton>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+        @if (buttonClicked)
+        {
+            <div class="mb-5">
+                <MudDivider />
+            </div>
+            <MudCard Class="mb-3">
+                <MudCardHeader>
+                    <MudAlert Icon="@Icons.Material.Filled.Info" Severity="Severity.Info">@AlertText</MudAlert>
+                </MudCardHeader>
+                <MudCardContent>
+                    @if (isAddBudget)
+                    {
+                        
+                    }
+                    else
+                    {
+                        
+                    }
+                </MudCardContent>
+            </MudCard>
+        }
+    </MudCardContent>
+
+</MudCard>
+
+@code {
+    protected string AlertText = string.Empty;
+    protected bool buttonClicked = false;
+    protected bool isAddBudget = false;
+
+    protected async Task GetAddBudgetForm()
+    {
+        AlertText = "Fill in Required Information to add Budget";
+        buttonClicked = true;
+        isAddBudget = true;
+    }
+}
