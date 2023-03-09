@@ -19,6 +19,14 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[BudgetsTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[BudgetTypeTable]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[CosmeticsStockTable]",
          "ObjectType": 0
       },

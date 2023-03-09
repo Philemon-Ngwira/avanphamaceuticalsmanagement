@@ -1,4 +1,7 @@
 ﻿@page "/Budgets"
+@using System.Reflection;
+@using avanphamaceuticalsmanagement.Client.Services.Interfaces;
+@using avanphamaceuticalsmanagement.Shared.Models;
 
 <MudCard Class="mb-3">
     <MudCardHeader>
@@ -28,7 +31,7 @@
                         <MudText Align="Align.Center" Typo="Typo.subtitle1"><b>Manage Existing Budget</b></MudText>
                     </MudCardHeader>
                     <MudCardContent>
-                        <MudButton ButtonType="ButtonType.Button" StartIcon="@Icons.Material.Filled.Add" FullWidth="true" Variant="Variant.Filled" Color="Color.Info">New Budget</MudButton>
+                        <MudButton ButtonType="ButtonType.Button" StartIcon="@Icons.Material.Filled.ModeEdit" FullWidth="true" Variant="Variant.Filled" Color="Color.Info" OnClick="EditExistingBudget">Edit Current Budget</MudButton>
                     </MudCardContent>
                 </MudCard>
             </MudItem>
@@ -40,16 +43,124 @@
             </div>
             <MudCard Class="mb-3">
                 <MudCardHeader>
-                    <MudAlert Icon="@Icons.Material.Filled.Info" Severity="Severity.Info">@AlertText</MudAlert>
+                    <MudAlert @ref="mudAlert" Icon="@Icons.Material.Filled.Info">@AlertText</MudAlert>
                 </MudCardHeader>
                 <MudCardContent>
                     @if (isAddBudget)
                     {
-                        
+                        <MudPaper>
+                            <MudGrid>
+                                <MudItem xs="12">
+                                    <MudText Typo="Typo.h6"><b>Fill in Required Information</b></MudText>
+                                </MudItem>
+
+                                <MudItem xs="12" md="6">
+                                    <MudSelect T="BudgetTypeTable" @bind-Value="budgetType" Label="Select Budget Type" ToStringFunc="Budgetconverter" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter" Margin="Margin.Dense">
+                                        @foreach (var item in _budgetTypes)
+                                        {
+                                            <MudSelectItem T="BudgetTypeTable" Value="item">@item.BudgetType</MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                </MudItem>
+                                <MudItem xs="12" md="6">
+                                    <MudDateRangePicker Label="Pick Bugdet Period" @bind-DateRange="_dateRange" AnchorOrigin="Origin.BottomCenter" Margin="Margin.Dense" Variant="Variant.Outlined" />
+                                </MudItem>
+                                <MudItem xs="12" md="6">
+                                    <MudNumericField Variant="Variant.Outlined" Placeholder="Enter Amount" Label="Budget Amount" @bind-Value="Budget.Amount" Margin="Margin.Dense" T="double?"></MudNumericField>
+                                </MudItem>
+                                <MudItem xs="12" md="6">
+                                    <MudTextField Lines="3" Variant="Variant.Outlined" Placeholder="Enter Comment" Label="Comment" Margin="Margin.Dense" @bind-Value="Budget.Comment" T="string"></MudTextField>
+                                </MudItem>
+                                <MudItem xs="12">
+                                    <MudButton ButtonType="ButtonType.Button" FullWidth="true" Color="Color.Success" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.SaveAlt" OnClick="SaveBudget">Save Budget</MudButton>
+                                </MudItem>
+                            </MudGrid>
+                        </MudPaper>
                     }
                     else
                     {
-                        
+                        <MudPaper>
+                            <MudGrid Class="mb-3">
+                                <MudItem xs="12">
+                                    <MudText Typo="Typo.h6"><b>Fill in Required Information</b></MudText>
+                                </MudItem>
+                                <MudItem xs="12">
+                                    @if (_budgets.Count == 0)
+                                    {
+                                        <MudTable Items="@_budgets" Dense="true" Hover="true" ReadOnly="@false" CanCancelEdit="true" Filter="new Func<BudgetsTable,bool>(FilterFunc)" Loading="true" LoadingProgressColor="Color.Primary" />
+                                    }
+                                    else
+                                    {
+                                        <MudTable Items="@_budgets" Dense="true" Hover="true" ReadOnly="@false" CanCancelEdit="true" Filter="new Func<BudgetsTable,bool>(FilterFunc)"
+                                      @bind-SelectedItem="selectedItem" SortLabel="Sort By" CommitEditTooltip="Commit Edit"
+                                      RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues"
+                                      RowEditCommit="ItemHasBeenCommitted" ApplyButtonPosition="@applyButtonPosition" EditButtonPosition="@editButtonPosition" EditTrigger="TableEditTrigger.EditButton">
+                                            <ToolBarContent>
+                                                <MudText Typo="Typo.h6">Periodic Elements</MudText>
+                                                <MudSpacer />
+                                                <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                                            </ToolBarContent>
+                                          @*  <ColGroup>
+                                                @if (applyButtonPosition.DisplayApplyButtonAtStart() || (editButtonPosition.DisplayEditButtonAtStart()))
+                                                {
+                                                    <col style="width:30px;" />
+                                                }
+                                                <col style="width:30px;" />
+                                                <col style="width:30px;" />
+                                                <col style="width:80%;" />
+                                                <col />
+                                                <col />
+                                                @if (applyButtonPosition.DisplayApplyButtonAtEnd() || (editButtonPosition.DisplayEditButtonAtEnd()))
+                                                {
+                                                    <col style="width:30px;" />
+                                                }
+                                            </ColGroup>*@
+                                            <HeaderContent>
+                                                <MudTh><MudTableSortLabel SortBy="new Func<BudgetsTable, object>(x=>x.id)">Id</MudTableSortLabel></MudTh>
+                                                <MudTh><MudTableSortLabel SortBy="new Func<BudgetsTable, object>(x=>x.BudgetType.BudgetType)">BudgetType</MudTableSortLabel></MudTh>
+                                                <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<BudgetsTable, object>(x=>x.Amount)">Amount</MudTableSortLabel></MudTh>
+                                                <MudTh><MudTableSortLabel SortBy="new Func<BudgetsTable, object>(x=>x.StartDate)">Start Date</MudTableSortLabel></MudTh>
+                                                <MudTh><MudTableSortLabel SortBy="new Func<BudgetsTable, object>(x=>x.EndDate)">End Date</MudTableSortLabel></MudTh>
+                                            </HeaderContent>
+                                            <RowTemplate>
+                                                <MudTd DataLabel="Id">@context.id</MudTd>
+                                                <MudTd DataLabel="Budget Type">@context.BudgetType.BudgetType</MudTd>
+                                                <MudTd DataLabel="Amount">@context.Amount</MudTd>
+                                                <MudTd DataLabel="Start Date">@context.StartDate.Value.ToShortDateString()</MudTd>
+                                                <MudTd DataLabel="End Date">@context.EndDate.Value.ToShortDateString()</MudTd>
+                                            </RowTemplate>
+                                            <RowEditingTemplate>
+                                                <MudTd DataLabel="Id">@context.id</MudTd>
+                                                <MudTd DataLabel="BudgetType">
+                                                    <MudSelect T="BudgetTypeTable" @bind-Value="@context.BudgetType" Label="Select Budget Type" ToStringFunc="Budgetconverter" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter" Margin="Margin.Dense">
+                                                        @foreach (var item in _budgetTypes)
+                                                        {
+                                                            <MudSelectItem T="BudgetTypeTable" Value="item">@item.BudgetType</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+                                                </MudTd>
+                                                <MudTd DataLabel="Amount">
+                                                    <MudNumericField @bind-Value="@context.Amount" Required Min="1" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                                                    </MudTd>
+                                                    <MudTd DataLabel="Start Date">
+                                                    <MudDatePicker Label="Start Date" @bind-Date="@context.StartDate" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter" Margin="Margin.Dense" />
+
+                                                    </MudTd>
+                                                    <MudTd DataLabel="End Date">
+                                                    <MudDatePicker Label="End Date" @bind-Date="@context.EndDate" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter" Margin="Margin.Dense" />
+                                                    </MudTd>
+                                                </RowEditingTemplate>
+                                                <PagerContent>
+                                                    <MudTablePager />
+                                                </PagerContent>
+                                                <EditButtonContent Context="button">
+                                                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled"  />
+                                                </EditButtonContent>
+                                                </MudTable>
+                                    }
+                                </MudItem>
+                            </MudGrid>
+                        </MudPaper>
                     }
                 </MudCardContent>
             </MudCard>
@@ -62,11 +173,147 @@
     protected string AlertText = string.Empty;
     protected bool buttonClicked = false;
     protected bool isAddBudget = false;
+    static DateTime BudgetBeginDate = DateTime.Now;
+    static DateTime BudgetEndDate = DateTime.Now.AddDays(4);
+    protected BudgetsTable Budget = new();
+    protected BudgetTypeTable budgetType = new();
+    protected IList<BudgetTypeTable> _budgetTypes = new List<BudgetTypeTable>();
+    protected IList<BudgetsTable> _budgets = new List<BudgetsTable>();
+    [Inject] IGenericService _genericService { get; set; }
+    [Inject] ISnackbar Snackbar { get; set; }
+    [Inject] NavigationManager Navigation { get; set; }
+    protected DateRange _dateRange = new DateRange(BudgetBeginDate, BudgetEndDate);
+    protected MudAlert mudAlert = new();
+    protected BudgetsTable selectedItem = new();
+    protected BudgetsTable backupItem = new();
+    protected BudgetsTable elementBeforeEdit = new();
+    protected List<string> editEvents = new();
+    protected string searchString = string.Empty;
+    protected TableApplyButtonPosition applyButtonPosition = TableApplyButtonPosition.End;
+    protected TableEditButtonPosition editButtonPosition = TableEditButtonPosition.End;
 
     protected async Task GetAddBudgetForm()
     {
+        mudAlert.Severity = Severity.Info;
         AlertText = "Fill in Required Information to add Budget";
+        var result = await _genericService.GetAllAsync<BudgetTypeTable>("api/AvanPharmacy/GetBudgetTypes");
+        _budgetTypes = result.ToList();
         buttonClicked = true;
         isAddBudget = true;
+
+
+
     }
+
+    protected async Task EditExistingBudget()
+    {
+        mudAlert.Severity = Severity.Warning;
+        AlertText = "Edit Budget Date. Remember to counter Check and maker Sure all information is correct";
+        @if (_budgetTypes.Count == 0)
+        {
+            var result = await _genericService.GetAllAsync<BudgetTypeTable>("api/AvanPharmacy/GetBudgetTypes");
+            _budgetTypes = result.ToList();
+
+        }
+        var data = await _genericService.GetAllAsync<BudgetsTable>("api/AvanPharmacy/GetBudgets");
+        _budgets = data.ToList();
+        foreach (var item in _budgets)
+        {
+            item.BudgetType = _budgetTypes.Where(x => x.Id == item.BudgetTypeId).FirstOrDefault();
+        }
+        if (isAddBudget)
+        {
+            isAddBudget = false;
+        }
+        buttonClicked = true;
+    }
+
+    protected async Task SaveBudget()
+    {
+        Budget.StartDate = _dateRange.Start.Value;
+        Budget.EndDate = _dateRange.End.Value;
+        Budget.BudgetTypeId = budgetType.Id;
+        var virtualProperties = Budget.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(p => p.GetGetMethod()?.IsVirtual == true);
+        foreach (var virtualProperty in virtualProperties)
+        {
+            var value = virtualProperty.GetValue(Budget);
+            if (value != null)
+            {
+                virtualProperty.SetValue(Budget, null);
+            }
+        }
+        try
+        {
+            await _genericService.SaveAllAsync("api/AvanPharmacy/SaveBudget", Budget);
+            Snackbar.Add("Budget Saved", Severity.Success);
+            Navigation.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            var _ = ex.Message;
+            Snackbar.Add(_, Severity.Error);
+            throw;
+        }
+
+    }
+
+    #region InLine Table
+    private void ClearEventLog()
+    {
+        editEvents.Clear();
+    }
+
+    private void AddEditionEvent(string message)
+    {
+        editEvents.Add(message);
+        StateHasChanged();
+    }
+
+    private void BackupItem(object element)
+    {
+        elementBeforeEdit = new()
+            {
+                id = ((BudgetsTable)element).id,
+                BudgetType = ((BudgetsTable)element).BudgetType,
+                Amount = ((BudgetsTable)element).Amount,
+                StartDate = ((BudgetsTable)element).StartDate,
+                EndDate = ((BudgetsTable)element).EndDate,
+                Comment = ((BudgetsTable)element).Comment,
+            };
+        AddEditionEvent($"RowEditPreview event: made a backup of Element {((BudgetsTable)element).Amount}");
+    }
+
+    private void ItemHasBeenCommitted(object element)
+    {
+        AddEditionEvent($"RowEditCommit event: Changes to Element {((BudgetsTable)element).Amount} committed");
+    }
+
+    private void ResetItemToOriginalValues(object element)
+    {
+        ((BudgetsTable)element).id = elementBeforeEdit.id;
+        ((BudgetsTable)element).BudgetType = elementBeforeEdit.BudgetType;
+        ((BudgetsTable)element).Amount = elementBeforeEdit.Amount;
+        ((BudgetsTable)element).StartDate = elementBeforeEdit.StartDate;
+        ((BudgetsTable)element).EndDate = elementBeforeEdit.EndDate;
+        ((BudgetsTable)element).Comment = elementBeforeEdit.Comment;
+        AddEditionEvent($"RowEditCancel event: Editing of Element {((BudgetsTable)element).Amount} canceled");
+    }
+
+    private bool FilterFunc(BudgetsTable element)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.Amount.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.BudgetType.BudgetType.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if ($"{element.StartDate} {element.EndDate}".Contains(searchString))
+            return true;
+        return false;
+    }
+    #endregion
+
+    #region String Functions
+    protected Func<BudgetTypeTable, string> Budgetconverter = p => p.BudgetType;
+    #endregion
 }

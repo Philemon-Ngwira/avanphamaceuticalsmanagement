@@ -23,6 +23,7 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
         protected IList<PharmacyTransactionsTable> _sales = new List<PharmacyTransactionsTable>();
         protected IList<StockCategoryTable> stockCategories = new List<StockCategoryTable>();
         public IList<RestockRequestsTable> _restockRequests = new List<RestockRequestsTable>();
+        protected IList<BudgetsTable> budgets = new List<BudgetsTable>();
         protected int? drugStock = 0;
         protected string SalesError = string.Empty;
         protected double? totalRevenue = 0;
@@ -52,6 +53,8 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
             {
                 RoleName = "Employee";
             }
+
+            await GetBudgets();
             await GetAllPatients();
             await GetAllEmployees();
             await GetAllDrugs();
@@ -65,6 +68,13 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
 
         protected string name = "Philemon";
         #region Get Functions
+
+        protected async Task GetBudgets()
+        {
+
+            var data = await _genericService.GetAllAsync<BudgetsTable>("api/AvanPharmacy/GetBudgetsDashBoard");
+            budgets = data.ToList();
+        }
         protected async Task GetAllPatients()
         {
             var result = await _genericService.GetAllAsync<PatientsTable>("api/AvanPharmacy/GetPatients");
@@ -141,6 +151,7 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
                 percentage = 100;
                 trajectoryItem.Icon = @Icons.Material.Filled.ArrowUpward;
                 trajectoryItem.IconColor = Color.Success;
+                trajectoryItem.IconSize = Size.Large;
                 percentageChangeString=percentage.ToString("0.00'%'", CultureInfo.InvariantCulture);
             }
             else if(currentSalesAmount < previousSalesAmount)
@@ -148,6 +159,7 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
                 percentage = percentageChange;
                 trajectoryItem.Icon = @Icons.Material.Filled.TrendingDown;
                 trajectoryItem.IconColor = Color.Error;
+                trajectoryItem.IconSize = Size.Large;
                 percentageChangeString = percentage.ToString("0.00'%'", CultureInfo.InvariantCulture);
             }
             else if(currentSalesAmount > previousSalesAmount && percentageChange != 100)
@@ -155,6 +167,7 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
                 percentage = percentageChange;
                 trajectoryItem.Icon = @Icons.Material.Filled.TrendingUp;
                 trajectoryItem.IconColor = Color.Success;
+                trajectoryItem.IconSize = Size.Large;
                 percentageChangeString = percentage.ToString("0.00'%'", CultureInfo.InvariantCulture);
             }
         }

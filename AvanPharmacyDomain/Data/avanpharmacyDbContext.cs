@@ -16,6 +16,10 @@ public partial class avanpharmacyDbContext : DbContext
 
     public virtual DbSet<AgrovetStockTable> AgrovetStockTables { get; set; }
 
+    public virtual DbSet<BudgetTypeTable> BudgetTypeTables { get; set; }
+
+    public virtual DbSet<BudgetsTable> BudgetsTables { get; set; }
+
     public virtual DbSet<CosmeticsStockTable> CosmeticsStockTables { get; set; }
 
     public virtual DbSet<DeviceCode> DeviceCodes { get; set; }
@@ -42,6 +46,11 @@ public partial class avanpharmacyDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<BudgetsTable>(entity =>
+        {
+            entity.HasOne(d => d.BudgetType).WithMany(p => p.BudgetsTables).HasConstraintName("FK_BudgetsTable_BudgetTypeTable");
+        });
+
         modelBuilder.Entity<DrugStockTable>(entity =>
         {
             entity.HasOne(d => d.DrugCatNavigation).WithMany(p => p.DrugStockTables).HasConstraintName("FK_DrugStockTable_Drugcategories");

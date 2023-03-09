@@ -22,21 +22,6 @@
             <MudText Align="Align.Left" Typo="Typo.subtitle1"><b>Dashboard</b></MudText>
             <MudDivider />
             <MudGrid>
-                <MudItem xs="12">
-                    <MudCard>
-                        <MudCardHeader>
-                            <CardHeaderContent>
-                                <MudText Typo="Typo.h6"><b>Sales Trajectory</b></MudText>
-                                <MudList>
-                                    <MudListItem @ref="@trajectoryItem" Text="@percentageChangeString"/>
-                                </MudList>
-                            </CardHeaderContent>
-                        </MudCardHeader>
-                    </MudCard>
-                   <MudCardContent>
-
-                   </MudCardContent>
-                </MudItem>
                 <MudItem xs="12" md="3">
                     <MudCard Elevation="2" Square="false" Class="mb-3">
                         <MudCardHeader>
@@ -146,6 +131,44 @@
                                 else
                                 {
                                     <MudText Align="Align.Left" Typo="Typo.subtitle2">@_sales.Count Prescriptions sold</MudText>
+                                }
+                            }
+
+                        </MudCardContent>
+                    </MudCard>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudCard>
+                        <MudCardHeader>
+                            <CardHeaderContent>
+                                <MudText Typo="Typo.h6"><b>Sales Trajectory From Last Month to This Month</b></MudText>
+                                <MudList>
+                                    <MudListItem @ref="@trajectoryItem" Text="@percentageChangeString" />
+                                </MudList>
+                            </CardHeaderContent>
+                        </MudCardHeader>
+                    </MudCard>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudCard>
+                        <MudCardHeader>
+                            <CardHeaderContent>
+                                <MudText Typo="Typo.h6"><b>Current Budget</b></MudText>
+                            </CardHeaderContent>
+                        </MudCardHeader>
+                        <MudCardContent>
+                            @if (budgets.Count == 0)
+                            {
+                                <MudText Typo="Typo.subtitle1">No budgets</MudText>
+                            }
+                            else
+                            {
+                                @foreach (var item in budgets)
+                                {
+                                    if (item.EndDate.Value > DateTime.Today)
+                                    {
+                                        <MudText Typo="Typo.subtitle1">@item.BudgetType.BudgetType ZMW @item.Amount</MudText>
+                                    }
                                 }
                             }
 

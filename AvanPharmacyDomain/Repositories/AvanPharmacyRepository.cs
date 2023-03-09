@@ -35,6 +35,22 @@ namespace AvanPharmacyDomain.Repositories
                 throw;
             }
         }
+        public async Task<IEnumerable<BudgetsTable>> GetBudgetsDashBoard()
+        {
+            try
+            {
+                var res = await _dbContext.BudgetsTables
+                    .Include(x => x.BudgetType)
+                    .ToListAsync ();
+
+                return res;
+            }
+            catch (Exception ex)
+            {
+                var _ = ex.Message;
+                throw;
+            }
+        }
         public async Task<IEnumerable<RestockRequestsTable>> GetRestockRequests()
         {
             try

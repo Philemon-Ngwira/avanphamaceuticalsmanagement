@@ -23,7 +23,14 @@ namespace avanphamaceuticalsmanagement.Server.Controllers
             var drugs = await AvanPharmacyRepository.GetAsync<DrugStockTable>();
             return Ok(drugs);
         }
-      
+        [HttpGet("GetBudgetsDashBoard")]
+        public async Task<IActionResult> GetBudgetsDashBoardAsync()
+        {
+            var drugs = await AvanPharmacyRepository.GetBudgetsDashBoard();
+            return Ok(drugs);
+        }
+
+
         [HttpGet("GetDrugsCategories")]
         public async Task<IActionResult> GetDrugCatAsync()
         {
@@ -37,7 +44,21 @@ namespace avanphamaceuticalsmanagement.Server.Controllers
             var employees = await AvanPharmacyRepository.GetAsync<EmployeesTable>();
             return Ok(employees);
         }
-        
+
+        [HttpGet("GetBudgetTypes")]
+        public async Task<IActionResult> GetBudgetTypes()
+        {
+            var employees = await AvanPharmacyRepository.GetAsync<BudgetTypeTable>();
+            return Ok(employees);
+        }
+
+        [HttpGet("GetBudgets")]
+        public async Task<IActionResult> GetBudgets()
+        {
+            var budgets = await AvanPharmacyRepository.GetAsync<BudgetsTable>();
+            return Ok(budgets);
+        }
+
         [HttpGet("GetPatients")]
         public async Task<IActionResult> GetPatientsAsync()
         {
@@ -80,7 +101,7 @@ namespace avanphamaceuticalsmanagement.Server.Controllers
         [HttpGet]
         [Route("GetDrugsByDrugCategory/{id}")]
 
-        public  IEnumerable<DrugStockTable> GetDrugs(int id)
+        public IEnumerable<DrugStockTable> GetDrugs(int id)
         {
             var res = AvanPharmacyRepository.GetDrugsByDCIdAsync(id);
 
@@ -95,6 +116,14 @@ namespace avanphamaceuticalsmanagement.Server.Controllers
             var result = await AvanPharmacyRepository.SaveAllAsync(drugStock);
             return Ok(result);
         }
+
+        [HttpPost("SaveBudget")]
+        public async Task<IActionResult> SaveBudget(BudgetsTable Budget)
+        {
+            var result = await AvanPharmacyRepository.SaveAllAsync(Budget);
+            return Ok(result);
+        }
+
         [HttpPost("SaveRestockRequest")]
         public async Task<IActionResult> SaveRestockRequest(RestockRequestsTable Stock)
         {
@@ -120,7 +149,7 @@ namespace avanphamaceuticalsmanagement.Server.Controllers
         [HttpPut("UpdateDrugs")]
         public async Task<IActionResult> UpdateDrugs(DrugStockTable drugStock)
         {
-            var result =  await AvanPharmacyRepository.updateAsync(drugStock);
+            var result = await AvanPharmacyRepository.updateAsync(drugStock);
             return Ok(result);
         }
         [HttpPut("UpdateRestockRequest")]
