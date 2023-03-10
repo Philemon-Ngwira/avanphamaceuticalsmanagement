@@ -8,20 +8,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace avanphamaceuticalsmanagement.Shared.Models;
 
-[Table("PatientsTable")]
-public partial class PatientsTable
+[Table("CustomerTypeTable")]
+public partial class CustomerTypeTable
 {
     [Key]
     public int Id { get; set; }
 
     [StringLength(50)]
     [Unicode(false)]
-    public string FirstName { get; set; }
+    public string CustomerTypeDescription { get; set; }
 
-    [StringLength(50)]
-    [Unicode(false)]
-    public string LastName { get; set; }
-
-    [InverseProperty("Patient")]
+    [InverseProperty("CustomerType")]
     public virtual ICollection<PharmacyTransactionsTable> PharmacyTransactionsTables { get; } = new List<PharmacyTransactionsTable>();
 }

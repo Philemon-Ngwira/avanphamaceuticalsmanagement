@@ -31,6 +31,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[CustomerTypeTable]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[DeviceCodes]",
          "ObjectType": 0
       },

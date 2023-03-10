@@ -15,11 +15,11 @@
 
     <AuthorizeView Roles="Admin">
         <Authorized>
-            <MudNavLink Href="/Admin" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.AdminPanelSettings">Manage Users and Roles</MudNavLink>
+            <MudNavLink Href="/Admin" Match="NavLinkMatch.Prefix" Icon="fa-solid fa-user-gear">Manage Users and Roles</MudNavLink>
             <MudBadge Content="RequestCount" Overlap="true" Color="Color.Primary">
                 <MudNavLink Href="/RequestsForApproval" Match="NavLinkMatch.Prefix" ForceLoad="true" Icon="@Icons.Material.Filled.Approval">Requests For Approval</MudNavLink>
             </MudBadge>
-            <MudNavLink Href="/Budgets" Match="NavLinkMatch.Prefix" Icon="fa-solid fa-piggy-bank">Budgets</MudNavLink>
+            <MudNavLink Href="/Budgets" Match="NavLinkMatch.Prefix" Icon="fa-solid fa-building-columns">Budgets</MudNavLink>
          
         </Authorized>
     </AuthorizeView>

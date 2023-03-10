@@ -59,7 +59,15 @@
                         <MudCardContent>
                             @if (_patients.Count == 0)
                             {
-                                <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" Size="Size.Small" />
+
+                                if (patienterror != string.Empty)
+                                {
+                                    <MudText Align="Align.Left" Typo="Typo.subtitle2">@patienterror</MudText>
+                                }
+                                else
+                                {
+                                    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" Size="Size.Small" />
+                                }
                             }
                             else
                             {

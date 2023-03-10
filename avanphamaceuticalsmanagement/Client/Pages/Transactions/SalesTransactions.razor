@@ -11,79 +11,173 @@
         <MudAlert ContentAlignment="HorizontalAlignment.Left" Dense="true" Icon="@Icons.Material.Filled.Edit" Severity="Severity.Info">Enter Required Details</MudAlert>
         <MudDivider />
         <MudGrid>
-            <MudItem xs="12" md="6">
-                <MudTextField T="string" Label="Customer First Name" @bind-Value="@PatientFirstName" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
-            </MudItem>
-            <MudItem xs="12" md="6">
-                <MudTextField T="string" Label="Customer Last Name" @bind-Value="@PatientLastName" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
-            </MudItem>
-            <MudItem xs="12" md="6">
-                <MudTextField T="string" Label="Condition" @bind-Value="@PatientCondition" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
-            </MudItem>
-
-            <MudItem xs="12" md="6">
-                <MudSelect T="StockCategoryTable" Margin="Margin.Dense" @bind-Value="@selectedCategory" SelectedValuesChanged="GetCosmetics" ToStringFunc="Categoryconverter" Variant="Variant.Outlined" Placeholder="Select Category" Label="Select Category">
-                    @foreach (var item in _StockCategories)
-                    {
-                        <MudSelectItem T="StockCategoryTable" Value="item">@item.StockCategoryName</MudSelectItem>
-                    }
-                </MudSelect>
-            </MudItem>
-            @if (selectedCategory.StockCategoryName == "Cosmetics")
-            {
-                <MudItem xs="12" md="6">
-                    <MudSelect T="CosmeticsStockTable" Clearable="true" @bind-Value="sale.Cosmetic" ToStringFunc="Cosmeticconverter" Label="Cosmetic" Placeholder="Select Cosmetic" Variant="Variant.Outlined" Margin="Margin.Dense">
-                        @foreach (var item in _cosmeticsStocks)
-                        {
-                            <MudSelectItem T="CosmeticsStockTable" Value="item">@item.CosmeticName</MudSelectItem>
-                        }
-                    </MudSelect>
-                </MudItem>
-            }
-            else if (selectedCategory.StockCategoryName == "Medicine")
-            {
-                <MudItem xs="12" md="6">
-                    <MudSelect T="Drugcategory" Clearable="true" @bind-Value="drugcategory" SelectedValuesChanged="OnDrugCateforySelected" ToStringFunc="DrugCategoryconverter" Label="Drug Category" Placeholder="Select Drug Category" Variant="Variant.Outlined" Margin="Margin.Dense">
-                        @foreach (var item in _drugcategories)
-                        {
-                            <MudSelectItem T="Drugcategory" Value="item">@item.DrugCategoryName</MudSelectItem>
-                        }
-                    </MudSelect>
-                </MudItem>
-            }
-            @if (selectedCategory.Id == 1)
-            {
-
-            }
-            else if (selectedCategory.Id == 2)
-            {
-                <MudItem xs="12" md="6">
-                    <MudSelect T="DrugStockTable" Margin="Margin.Dense" @bind-Value="selectedDrug" ToStringFunc="Drugsconverter" Variant="Variant.Outlined" Placeholder="Prescribed Medicine" Label="Select Drug">
-                        @foreach (var item in drugs)
-                        {
-                            <MudSelectItem T="DrugStockTable" Value="item">@item.DrugName: @item.Unit</MudSelectItem>
-                        }
-                    </MudSelect>
-                </MudItem>
-            }
-            else
-            {
-
-            }
-            <MudItem xs="12" md="6">
-                <MudNumericField T="int?" Label="Quantity" @bind-Value="Quantity" Variant="Variant.Outlined" Margin="Margin.Dense"></MudNumericField>
-            </MudItem>
-            <MudItem xs="12" md="6">
-                <MudSelect T="EmployeesTable" Margin="Margin.Dense" ToStringFunc="Employeesconverter" @bind-Value="pharmacist" Variant="Variant.Outlined" Placeholder="Prescribed By" Label="Prescribed By">
-                    @foreach (var item in employees)
-                    {
-                        <MudSelectItem T="EmployeesTable" Value="item">@item.FirstName</MudSelectItem>
-                    }
-                </MudSelect>
-            </MudItem>
             <MudItem xs="12">
-                <MudDatePicker PickerVariant="PickerVariant.Inline" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Current Date" Disabled="true" ReadOnly="true" Orientation="Orientation.Landscape" Date="@date" />
+                <MudSelect T="CustomerTypeTable" Margin="Margin.Dense" @bind-Value="@customerType" ToStringFunc="CustomerTypeconverter" Variant="Variant.Outlined" Placeholder="Customer Type" Label="Select Customer Type">
+                    @foreach (var item in _CustomerTypes)
+                    {
+                        <MudSelectItem T="CustomerTypeTable" Value="item">@item.CustomerTypeDescription</MudSelectItem>
+                    }
+                </MudSelect>
             </MudItem>
+            @if (customerType.Id == 2)
+            {
+                <MudItem xs="12">
+                    <MudCheckBox @bind-Checked="newPatient" Label="New Patient?" LabelPosition="LabelPosition.End" UnCheckedColor="Color.Default" Color="Color.Info" UncheckedIcon="@Icons.Material.Filled.DataSaverOff" CheckedIcon="@Icons.Material.Filled.DataSaverOn"></MudCheckBox>
+                </MudItem>
+                @if (newPatient)
+                {
+                    <MudItem xs="12" md="6">
+                        <MudTextField T="string" Label="Customer First Name" @bind-Value="@PatientFirstName" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                    </MudItem>
+                    <MudItem xs="12" md="6">
+                        <MudTextField T="string" Label="Customer Last Name" @bind-Value="@PatientLastName" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                    </MudItem>
+
+                }
+                else
+                {
+                    <MudItem xs="12" md="6">
+                        <MudSelect T="PatientsTable" Margin="Margin.Dense" @bind-Value="@Patient" ToStringFunc="Patientconverter" Variant="Variant.Outlined" Placeholder="Select Patient" Label="Select Patient">
+                            @foreach (var item in _patients)
+                            {
+                                <MudSelectItem T="PatientsTable" Value="item">@item.FirstName @item.LastName</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                }
+                <MudItem xs="12" md="6">
+                    <MudTextField T="string" Label="Condition" @bind-Value="@PatientCondition" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudSelect T="StockCategoryTable" Margin="Margin.Dense" @bind-Value="@selectedCategory" SelectedValuesChanged="GetCosmetics" ToStringFunc="Categoryconverter" Variant="Variant.Outlined" Placeholder="Select Category" Label="Select Category">
+                        @foreach (var item in _StockCategories)
+                        {
+                            <MudSelectItem T="StockCategoryTable" Value="item">@item.StockCategoryName</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                @if (selectedCategory.StockCategoryName == "Cosmetics")
+                {
+                    <MudItem xs="12" md="6">
+                        <MudSelect T="CosmeticsStockTable" Clearable="true" @bind-Value="sale.Cosmetic" ToStringFunc="Cosmeticconverter" Label="Cosmetic" Placeholder="Select Cosmetic" Variant="Variant.Outlined" Margin="Margin.Dense">
+                            @foreach (var item in _cosmeticsStocks)
+                            {
+                                <MudSelectItem T="CosmeticsStockTable" Value="item">@item.CosmeticName</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                }
+                else if (selectedCategory.StockCategoryName == "Medicine")
+                {
+                    <MudItem xs="12" md="6">
+                        <MudSelect T="Drugcategory" Clearable="true" @bind-Value="drugcategory" SelectedValuesChanged="OnDrugCateforySelected" ToStringFunc="DrugCategoryconverter" Label="Drug Category" Placeholder="Select Drug Category" Variant="Variant.Outlined" Margin="Margin.Dense">
+                            @foreach (var item in _drugcategories)
+                            {
+                                <MudSelectItem T="Drugcategory" Value="item">@item.DrugCategoryName</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                }
+                @if (selectedCategory.Id == 1)
+                {
+
+                }
+                else if (selectedCategory.Id == 2)
+                {
+                    <MudItem xs="12" md="6">
+                        <MudSelect T="DrugStockTable" Margin="Margin.Dense" @bind-Value="selectedDrug" ToStringFunc="Drugsconverter" Variant="Variant.Outlined" Placeholder="Prescribed Medicine" Label="Select Drug">
+                            @foreach (var item in drugs)
+                            {
+                                <MudSelectItem T="DrugStockTable" Value="item">@item.DrugName: @item.Unit</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                }
+                else
+                {
+
+                }
+                <MudItem xs="12" md="6">
+                    <MudNumericField T="int?" Label="Quantity" @bind-Value="Quantity" Variant="Variant.Outlined" Margin="Margin.Dense"></MudNumericField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudSelect T="EmployeesTable" Margin="Margin.Dense" ToStringFunc="Employeesconverter" @bind-Value="pharmacist" Variant="Variant.Outlined" Placeholder="Prescribed By" Label="Prescribed By">
+                        @foreach (var item in employees)
+                        {
+                            <MudSelectItem T="EmployeesTable" Value="item">@item.FirstName</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudDatePicker PickerVariant="PickerVariant.Inline" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Current Date" Disabled="true" ReadOnly="true" Orientation="Orientation.Landscape" Date="@date" />
+                </MudItem>
+            }
+            else if (customerType.Id == 1)
+            {
+                <MudItem xs="12" md="6">
+                    <MudSelect T="StockCategoryTable" Margin="Margin.Dense" @bind-Value="@selectedCategory" SelectedValuesChanged="GetCosmetics" ToStringFunc="Categoryconverter" Variant="Variant.Outlined" Placeholder="Select Category" Label="Select Category">
+                        @foreach (var item in _StockCategories)
+                        {
+                            <MudSelectItem T="StockCategoryTable" Value="item">@item.StockCategoryName</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                @if (selectedCategory.StockCategoryName == "Cosmetics")
+                {
+                    <MudItem xs="12" md="6">
+                        <MudSelect T="CosmeticsStockTable" Clearable="true" @bind-Value="sale.Cosmetic" ToStringFunc="Cosmeticconverter" Label="Cosmetic" Placeholder="Select Cosmetic" Variant="Variant.Outlined" Margin="Margin.Dense">
+                            @foreach (var item in _cosmeticsStocks)
+                            {
+                                <MudSelectItem T="CosmeticsStockTable" Value="item">@item.CosmeticName</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                }
+                else if (selectedCategory.StockCategoryName == "Medicine")
+                {
+                    <MudItem xs="12" md="6">
+                        <MudSelect T="Drugcategory" Clearable="true" @bind-Value="drugcategory" SelectedValuesChanged="OnDrugCateforySelected" ToStringFunc="DrugCategoryconverter" Label="Drug Category" Placeholder="Select Drug Category" Variant="Variant.Outlined" Margin="Margin.Dense">
+                            @foreach (var item in _drugcategories)
+                            {
+                                <MudSelectItem T="Drugcategory" Value="item">@item.DrugCategoryName</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                }
+                @if (selectedCategory.Id == 1)
+                {
+
+                }
+                else if (selectedCategory.Id == 2)
+                {
+                    <MudItem xs="12" md="6">
+                        <MudSelect T="DrugStockTable" Margin="Margin.Dense" @bind-Value="selectedDrug" ToStringFunc="Drugsconverter" Variant="Variant.Outlined" Placeholder="Prescribed Medicine" Label="Select Drug">
+                            @foreach (var item in drugs)
+                            {
+                                <MudSelectItem T="DrugStockTable" Value="item">@item.DrugName: @item.Unit</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                }
+                else
+                {
+
+                }
+                <MudItem xs="12" md="6">
+                    <MudNumericField T="int?" Label="Quantity" @bind-Value="Quantity" Variant="Variant.Outlined" Margin="Margin.Dense"></MudNumericField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudSelect T="EmployeesTable" Margin="Margin.Dense" ToStringFunc="Employeesconverter" @bind-Value="pharmacist" Variant="Variant.Outlined" Placeholder="Prescribed By" Label="Prescribed By">
+                        @foreach (var item in employees)
+                        {
+                            <MudSelectItem T="EmployeesTable" Value="item">@item.FirstName</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudDatePicker PickerVariant="PickerVariant.Inline" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Current Date" Disabled="true" ReadOnly="true" Orientation="Orientation.Landscape" Date="@date" />
+                </MudItem>
+            }
         </MudGrid>
 
 
@@ -98,6 +192,7 @@
         <MudAlert Variant="Variant.Filled" Severity="Severity.Info" Icon="@Icons.Material.Filled.PriceCheck">ZMW @selectedDrug.OrderPrice</MudAlert>
 
     </MudCardActions>
+
 </MudCard>
 
 

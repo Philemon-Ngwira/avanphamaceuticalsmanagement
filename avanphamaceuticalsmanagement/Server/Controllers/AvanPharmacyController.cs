@@ -72,6 +72,13 @@ namespace avanphamaceuticalsmanagement.Server.Controllers
             return Ok(employees);
         }
 
+        [HttpGet("GetCustomertypes")]
+        public async Task<IActionResult> GetCustomerTypes()
+        {
+            var result = await AvanPharmacyRepository.GetAsync<CustomerTypeTable>();
+            return Ok(result);
+        }
+
         [HttpGet("GetCategories")]
         public async Task<IActionResult> GetCategoriesAsync()
         {

@@ -38,6 +38,8 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
         protected bool isBetterThanLastMonth;
         protected double percentage;
         protected string percentageChangeString;
+        protected string patienterror = string.Empty;
+        protected  Dictionary<string, double> categorySales = new Dictionary<string, double>();
         protected override async Task OnInitializedAsync()
         {
             var auth = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -66,7 +68,7 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
 
         }
 
-        protected string name = "Philemon";
+        protected string name = "";
         #region Get Functions
 
         protected async Task GetBudgets()
@@ -79,6 +81,11 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
         {
             var result = await _genericService.GetAllAsync<PatientsTable>("api/AvanPharmacy/GetPatients");
             _patients = result.ToList();
+            Task.Delay(1);
+            if (_patients.Count == 0)
+            {
+                patienterror = "No Patients Found.";
+            }
         }
         protected async Task GetApprovalRequests()
         {
@@ -127,12 +134,12 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
             int currentYear = now.Year;
 
             // Find the sales amount for the current month
-            double currentSalesAmount = _sales.FirstOrDefault(s => s.Date.Value.Month == currentMonth && s.Date.Value.Year == currentYear)?.saleAmout ?? 0;
+            double currentSalesAmount = _sales.Where(s => s.Date.Value.Month == currentMonth && s.Date.Value.Year == currentYear)?.Sum(x=>x.saleAmout)?? 0;
 
             // Find the sales amount for the previous month
             int previousMonth = currentMonth == 1 ? 12 : currentMonth - 1;
             int previousYear = currentMonth == 1 ? currentYear - 1 : currentYear;
-            double previousSalesAmount = _sales.FirstOrDefault(s => s.Date.Value.Month == previousMonth && s.Date.Value.Year == previousYear)?.saleAmout ?? 0;
+            double previousSalesAmount = _sales.Where(s => s.Date.Value.Month == previousMonth && s.Date.Value.Year == previousYear)?.Sum(x => x.saleAmout) ?? 0;
 
             // Calculate the percentage increment or decrease
             double percentageChange = 0;
@@ -225,23 +232,23 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
         #region Donught Chart
         protected async Task FillDonutChart()
         {
-            donutdata = new double[_sales.Count];
-            labels = new string[_sales.Count];
-
             foreach (var item in _sales)
             {
+
                 item.StockCategory = stockCategories.Where(x => x.Id == item.StockCategoryId).FirstOrDefault();
+                if (categorySales.ContainsKey(item.StockCategory.StockCategoryName))
+                {
+                    categorySales[item.StockCategory.StockCategoryName] += item.saleAmout;
+                }
+                else
+                {
+                    categorySales.Add(item.StockCategory.StockCategoryName, item.saleAmout);
+                }
+                //item.StockCategory = stockCategories.Where(x => x.Id == item.StockCategoryId).FirstOrDefault();
             }
-            for (int i = 0; i < _sales.Count; i++)
-            {
-                PharmacyTransactionsTable sale = _sales[i];
-
-                names.Add(sale.StockCategory.StockCategoryName);
-                labels = names.ToArray();
-                donutdata[i] = sale.saleAmout;
-            }
-
-
+            labels = categorySales.Keys.ToArray();
+            names = labels.ToList();
+            donutdata = categorySales.Values.ToArray();
         }
 
 

@@ -126,77 +126,77 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Management
             Request.Quantity = QuantityRequest;
             Request.RequestCategoryId = stockCategoryTable.Id;
             Request.Status = 2;
-            var auth =  await AuthenticationState.GetAuthenticationStateAsync();
+            var auth = await AuthenticationState.GetAuthenticationStateAsync();
             var user = auth.User;
             Request.Requester = user.Identity.Name;
             await _genericService.SaveAllAsync("api/AvanPharmacy/SaveRestockRequest", Request);
             Snackbar.Add("Restock Request Successfully Submitted", Severity.Success);
             Request = new();
-            RequestedDrug =new();
+            RequestedDrug = new();
             Cosmetics = new();
-            
+
 
         }
-            #endregion
+        #endregion
 
-            #region Add and Edit Drugs
-            protected async Task SaveDrugs()
+        #region Add and Edit Drugs
+        protected async Task SaveDrugs()
+        {
+            try
             {
-                try
-                {
-                    await _genericService.SaveAllAsync("api/AvanPharmacy/PostDrugs", stockTable);
-                    Snackbar.Add("Succesfully Saved!", Severity.Success);
-                    stockTable = new();
-                }
-                catch (Exception ex)
-                {
-                    Snackbar.Add(ex.Message, Severity.Error);
-                    throw;
-                }
+                await _genericService.SaveAllAsync("api/AvanPharmacy/PostDrugs", stockTable);
+                Snackbar.Add("Succesfully Saved!", Severity.Success);
+                stockTable = new();
             }
+            catch (Exception ex)
+            {
+                Snackbar.Add(ex.Message, Severity.Error);
+                throw;
+            }
+        }
 
-            protected async Task EditDrug(int id)
-            {
-                stockTable = drugs.FirstOrDefault(x => x.Id == id);
-                openeditdrawer = true;
-            }
+        protected async Task EditDrug(int id)
+        {
+            stockTable = drugs.FirstOrDefault(x => x.Id == id);
+            openeditdrawer = true;
+        }
 
-            protected async Task CompleteEdit()
+        protected async Task CompleteEdit()
+        {
+            try
             {
-                try
-                {
-                    await _genericService.UpdateAsync("api/AvanPharmacy/UpdateDrugs", stockTable);
-                    openeditdrawer = false;
-                    Snackbar.Add("Successfully Updated!", Severity.Success);
-                    await GetDrugs();
-                }
-                catch (Exception ex)
-                {
-                    var _ = ex.Message;
-                    Snackbar.Add(_, Severity.Error);
-                    throw;
-                }
+                await _genericService.UpdateAsync("api/AvanPharmacy/UpdateDrugs", stockTable);
+                openeditdrawer = false;
+                Snackbar.Add("Successfully Updated!", Severity.Success);
+                await GetDrugs();
             }
+            catch (Exception ex)
+            {
+                var _ = ex.Message;
+                Snackbar.Add(_, Severity.Error);
+                throw;
+            }
+        }
 
-            public async Task DeleteDrugs(int id)
+        public async Task DeleteDrugs(int id)
+        {
+            try
             {
-                try
-                {
-                    await _genericService.DeleteAsync($"api/AvanPharmacy/DeleteDrugs/{id}");
-                    Snackbar.Add("Record Successfully Removed", Severity.Warning);
-                    await GetDrugs();
-                }
-                catch (Exception ex)
-                {
-                    var _ = ex.Message;
-                    Snackbar.Add(_, Severity.Error);
-                    throw;
-                }
+                await _genericService.DeleteAsync($"api/AvanPharmacy/DeleteDrugs/{id}");
+                Snackbar.Add("Record Successfully Removed", Severity.Warning);
+                await GetDrugs();
             }
+            catch (Exception ex)
+            {
+                var _ = ex.Message;
+                Snackbar.Add(_, Severity.Error);
+                throw;
+            }
+        }
 
         #endregion
 
-            #region string Functions
+        #region string Functions
         protected Func<StockCategoryTable, string> Categoryconverter = p => p.StockCategoryName;
         protected Func<Drugcategory, string> DrugCategoryconverter = p => p.DrugCategoryName;
         protected Func<DrugStockTable, string> Drugconverter = p => p.DrugName;

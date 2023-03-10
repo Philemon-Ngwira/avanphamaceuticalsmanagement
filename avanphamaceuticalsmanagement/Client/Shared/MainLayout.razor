@@ -6,7 +6,7 @@
 <MudSnackbarProvider />
 
 <MudLayout>
-    <MudAppBar Fixed="true" Elevation="2">
+    <MudAppBar Fixed="true" Elevation="2" >
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <MudImage Alt="Logo" Src="/images/AvanPharmacyWhite.png" Width="100" Height="100"></MudImage>
         Avan Pharmaceuticals
@@ -15,7 +15,7 @@
 
         <LoginDisplay />
     </MudAppBar>
-    <MudDrawer @bind-Open="@_drawerOpen" ClipMode="DrawerClipMode.Docked">
+    <MudDrawer @bind-Open="@_drawerOpen"  ClipMode="DrawerClipMode.Docked" Variant="DrawerVariant.Mini" >
         <NavMenu />
     </MudDrawer>
     <MudMainContent>
@@ -31,6 +31,6 @@
     {
         _drawerOpen = !_drawerOpen;
     }
-
+    
 
 }
