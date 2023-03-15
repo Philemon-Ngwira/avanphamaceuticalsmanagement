@@ -24,6 +24,7 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
         protected IList<StockCategoryTable> stockCategories = new List<StockCategoryTable>();
         public IList<RestockRequestsTable> _restockRequests = new List<RestockRequestsTable>();
         protected IList<BudgetsTable> budgets = new List<BudgetsTable>();
+        
         protected int? drugStock = 0;
         protected string SalesError = string.Empty;
         protected double? totalRevenue = 0;
@@ -40,6 +41,10 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
         protected string percentageChangeString;
         protected string patienterror = string.Empty;
         protected  Dictionary<string, double> categorySales = new Dictionary<string, double>();
+        protected double totalSales ;
+        protected double IncomeBudget;
+        protected string totalsalesString = string.Empty;
+
         protected override async Task OnInitializedAsync()
         {
             var auth = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -64,7 +69,8 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
             await getStockCategories();
             await FillChart();
             await FillDonutChart();
-            await CalculateSalesTrajectory();
+            CalculateSalesTrajectory();
+            await GetProgressData();
 
         }
 
@@ -125,7 +131,7 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
                 SalesError = "No sales Recorded Yet.";
             }
         }
-        protected async Task CalculateSalesTrajectory()
+        protected void  CalculateSalesTrajectory()
         {
 
             // Get the current month and year
@@ -250,9 +256,18 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
             names = labels.ToList();
             donutdata = categorySales.Values.ToArray();
         }
+        #endregion
 
-
-
+        #region ProgressBars
+        protected async Task GetProgressData()
+        {
+            int currentYear = DateTime.Now.Year;
+            string IncomeBudgetName = "Operating Income";
+            IncomeBudget = (double)budgets.Where(x=>x.BudgetType.BudgetType == IncomeBudgetName && x.StartDate.Value.Year == currentYear).Select(x=>x.Amount).Sum();
+            var num = _sales.Where(x => x.Date.Value.Year == currentYear).Select(X=>X.saleAmout).Sum();
+            totalSales = num / IncomeBudget * 100;
+            totalsalesString = totalSales.ToString("0.00'%'", CultureInfo.InvariantCulture);
+        }
         #endregion
     }
 }

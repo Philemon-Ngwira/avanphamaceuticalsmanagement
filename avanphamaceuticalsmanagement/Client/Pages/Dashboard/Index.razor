@@ -213,20 +213,19 @@
                         <MudDivider />
                         <MudCardContent>
                             <div>
-                                <MudText Align="Align.Left" Typo="Typo.subtitle2">Sales:</MudText>
-                                <MudProgressLinear Color="Color.Info" Size="Size.Large" Value="25" Class="my-7">
-                                    <MudText Typo="Typo.subtitle1" Color="Color.Surface">
-                                        <b>25%</b>
-                                    </MudText>
-                                </MudProgressLinear>
-                            </div>
-                            <div>
-                                <MudText Align="Align.Left" Typo="Typo.subtitle2">Patients:</MudText>
-                                <MudProgressLinear Color="Color.Secondary" Size="Size.Large" Value="75" Class="my-7">
-                                    <MudText Typo="Typo.subtitle1" Color="Color.Surface">
-                                        <b>75%</b>
-                                    </MudText>
-                                </MudProgressLinear>
+                                @if (totalSales == null)
+                                {
+                                    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" Size="Size.Small" />
+                                }
+                                else
+                                {
+                                    <MudText Align="Align.Left" Typo="Typo.subtitle2">Sales:</MudText>
+                                    <MudProgressLinear Color="Color.Info" Size="Size.Large" Value="totalSales" Class="my-7">
+                                        <MudText Typo="Typo.subtitle1" Color="Color.Secondary">
+                                            <b>@totalsalesString</b>
+                                        </MudText>
+                                    </MudProgressLinear>
+                                }
                             </div>
                         </MudCardContent>
                     </MudCard>
@@ -247,8 +246,9 @@
                             {
                                 <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" InputData="@donutdata" InputLabels="@labels">
                                     <CustomGraphics>
+          
                                         <text class="donut-inner-text" x="47%" y="35%" dominant-baseline="middle" text-anchor="middle" fill="black" font-family="Helvetica" font-size="2">Total</text>
-                                        <text class="donut-inner-text" x="47%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="black" font-family="Helvetica" font-size="5">@donutdata.Sum().ToString()</text>
+                                        <text class="donut-inner-text" x="47%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="black" font-family="Helvetica" font-size="5">ZMW @donutdata.Sum().ToString()</text>
                                     </CustomGraphics>
                                 </MudChart>
                             }
