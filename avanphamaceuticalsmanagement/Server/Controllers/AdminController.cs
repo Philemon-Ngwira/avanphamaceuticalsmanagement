@@ -1,12 +1,10 @@
-﻿using avanphamaceuticalsmanagement.Server.Models;
-
-using Microsoft.AspNetCore.Mvc;
-using System.Data.Entity;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 using avanphamaceuticalsmanagement.Client.Pages.Administration;
-
+using avanphamaceuticalsmanagement.Shared.IdentityModel;
+using System.Text;
 
 namespace avanphamaceuticalsmanagement.Server.Controllers
 {
@@ -142,7 +140,10 @@ namespace avanphamaceuticalsmanagement.Server.Controllers
 
             return NoContent();
         }
-
         
+
+
+
+
     }
 }

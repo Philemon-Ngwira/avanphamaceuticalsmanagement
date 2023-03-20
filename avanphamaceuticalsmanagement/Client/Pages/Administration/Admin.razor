@@ -29,8 +29,6 @@
                         <MudTd DataLabel="Id">@context.Id</MudTd>
                         <MudTd DataLabel="UserName">@context.UserName</MudTd>
                         <MudTd DataLabel="Email">@context.Email</MudTd>
-                        <MudTd DataLabel="Role"> @string.Join(", ", context.Roles)</MudTd>
-
                         <MudTd DataLabel="Action"><MudFab Size="Size.Small" Color="Color.Warning" Icon="@Icons.Material.Filled.Update" OnClick="() => EditUserRoles(context.Id)"></MudFab><MudFab Size="Size.Small" Color="Color.Error" Icon="@Icons.Material.Filled.DeleteForever" OnClick="() => DeleteUser(context.Id)"></MudFab></MudTd>
                     </RowTemplate>
                 </MudTable>

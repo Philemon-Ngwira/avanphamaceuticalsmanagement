@@ -51,6 +51,14 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[ExpensesTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ExpenseTypesTable]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[PatientsTable]",
          "ObjectType": 0
       },

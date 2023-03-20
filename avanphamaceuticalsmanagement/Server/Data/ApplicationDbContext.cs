@@ -1,4 +1,5 @@
-﻿using avanphamaceuticalsmanagement.Server.Models;
+﻿
+using avanphamaceuticalsmanagement.Shared.IdentityModel;
 using Duende.IdentityServer.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ namespace avanphamaceuticalsmanagement.Server.Data
         }
 
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

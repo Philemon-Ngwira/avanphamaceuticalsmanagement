@@ -8,16 +8,16 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Administration
 {
     public partial class RestockRequests
     {
-#region Injects
+        #region Injects
         [Inject]
         IGenericService _genericService { get; set; }
-
         [Inject]
         ISnackbar Snackbar { get; set; }
-
-#endregion
+        #endregion
         protected IList<RestockRequestsTable> _restockRequests = new List<RestockRequestsTable>();
+        protected IList<BudgetsTable> budgets = new List<BudgetsTable>();
         protected RestockRequestsTable RestockRequest = new();
+
         private TableGroupDefinition<RestockRequestsTable> _groupDefinition = new()
         {
             GroupName = "Requester",
@@ -43,7 +43,6 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Administration
                     restocks.Add(item);
                 }
             }
-
             _restockRequests = restocks;
         }
 
@@ -60,7 +59,6 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Administration
                     virtualProperty.SetValue(RestockRequest, null);
                 }
             }
-
             await _genericService.UpdateAsync("api/AvanPharmacy/UpdateRestockRequest", RestockRequest);
             Snackbar.Add("Request Rejected!", Severity.Error);
             RestockRequest = new();
@@ -69,22 +67,51 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Administration
 
         protected async Task HandleApprovals(int id)
         {
+            int currentYear = DateTime.Now.Year;
             RestockRequest = _restockRequests.FirstOrDefault(x => x.Id == id);
             RestockRequest.Status = 1;
-            var virtualProperties = RestockRequest.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(p => p.GetGetMethod()?.IsVirtual == true);
-            foreach (var virtualProperty in virtualProperties)
+            double budget = (double)budgets.Where(x => x.BudgetTypeId == 3 & x.StartDate.Value.Year == currentYear).Select(x => x.Amount).Sum();
+            int selectedBudget = budgets.Where(x => x.BudgetTypeId == 3 & x.StartDate.Value.Year == currentYear).Select(x => x.id).FirstOrDefault();
+            if (budget > 0)
             {
-                var value = virtualProperty.GetValue(RestockRequest);
-                if (value != null)
+                var amount = (double)(budget - RestockRequest.OrderPrice);
+                if (budget > amount)
                 {
-                    virtualProperty.SetValue(RestockRequest, null);
+                    //Update Current Expense Budget
+                    foreach (var item in budgets)
+                    {
+                        if (item.BudgetTypeId == 3 & item.id == selectedBudget)
+                        {
+                            item.Amount = amount;
+                        }
+                    }
+                    var virtualProperties = RestockRequest.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(p => p.GetGetMethod()?.IsVirtual == true);
+                    foreach (var virtualProperty in virtualProperties)
+                    {
+                        var value = virtualProperty.GetValue(RestockRequest);
+                        if (value != null)
+                        {
+                            virtualProperty.SetValue(RestockRequest, null);
+                        }
+                    }
+                    //Save Expense
+                    //UpdateRestockRequest
+                    await _genericService.UpdateAsync("api/AvanPharmacy/UpdateRestockRequest", RestockRequest);
+                    Snackbar.Add("Request Approved!", Severity.Success);
+                    RestockRequest = new();
+                    await GetApprovalRequests();
+                }
+                else
+                {
+                    Snackbar.Add("Available Budget Not enough for request Adjust Budget", Severity.Error);
+                    return;
                 }
             }
-
-            await _genericService.UpdateAsync("api/AvanPharmacy/UpdateRestockRequest", RestockRequest);
-            Snackbar.Add("Request Approved!", Severity.Success);
-            RestockRequest = new();
-            await GetApprovalRequests();
+            else
+            {
+                Snackbar.Add("No Budget Available for Request", Severity.Error);
+                return;
+            }
         }
     }
 }

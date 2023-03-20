@@ -1,9 +1,9 @@
 ﻿
 using Microsoft.AspNetCore.Identity;
 
-namespace avanphamaceuticalsmanagement.Server.Models
+namespace avanphamaceuticalsmanagement.Shared.IdentityModel
 {
-    public class ApplicationUser : IdentityUser
+    public class CustomUser : IdentityUser
     {
         public string ProfilePicture { get; set; }
     }

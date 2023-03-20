@@ -24,7 +24,7 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
         protected IList<StockCategoryTable> stockCategories = new List<StockCategoryTable>();
         public IList<RestockRequestsTable> _restockRequests = new List<RestockRequestsTable>();
         protected IList<BudgetsTable> budgets = new List<BudgetsTable>();
-        
+        protected IList<ExpensesTable> _expenses = new List<ExpensesTable>();
         protected int? drugStock = 0;
         protected string SalesError = string.Empty;
         protected double? totalRevenue = 0;
@@ -33,6 +33,7 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
         protected string[] labels;
         protected List<string> names = new();
         protected string formattedRevenueValue;
+        protected string formattedExpenseValue;
         protected string RoleName;
         public int numberofRequests = 0;
         protected MudListItem trajectoryItem = new MudListItem();
@@ -44,6 +45,7 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
         protected double totalSales ;
         protected double IncomeBudget;
         protected string totalsalesString = string.Empty;
+        protected ChartOptions chartOptions = new ChartOptions();
 
         protected override async Task OnInitializedAsync()
         {
@@ -187,6 +189,7 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
         #endregion
         #region Line Chart
         public List<ChartSeries> MonthlySales = new List<ChartSeries>();
+     
         public string[] XAxisLabels =
         {
             "Jan",
@@ -204,35 +207,42 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
         };
 
         public ChartSeries MonthlySalesChart = new ChartSeries();
+        public ChartSeries MonthlyExpensesChart = new ChartSeries();
         public async Task FillChart()
         {
             MonthlySalesChart.Name = "Monthly Sales";
-            double Jan = Convert.ToDouble(_sales.Where(x => x.Date.Value.Month == 1).Sum(x => x.saleAmout));
-            double Feb = Convert.ToDouble(_sales.Where(x => x.Date.Value.Month == 2).Sum(x => x.saleAmout));
-            double Mar = Convert.ToDouble(_sales.Where(x => x.Date.Value.Month == 3).Sum(x => x.saleAmout));
-            double Apr = Convert.ToDouble(_sales.Where(x => x.Date.Value.Month == 4).Sum(x => x.saleAmout));
-            double May = Convert.ToDouble(_sales.Where(x => x.Date.Value.Month == 5).Sum(x => x.saleAmout));
-            double Jun = Convert.ToDouble(_sales.Where(x => x.Date.Value.Month == 6).Sum(x => x.saleAmout));
-            double Jul = Convert.ToDouble(_sales.Where(x => x.Date.Value.Month == 7).Sum(x => x.saleAmout));
-            double Aug = Convert.ToDouble(_sales.Where(x => x.Date.Value.Month == 8).Sum(x => x.saleAmout));
-            double Sep = Convert.ToDouble(_sales.Where(x => x.Date.Value.Month == 9).Sum(x => x.saleAmout));
-            double Oct = Convert.ToDouble(_sales.Where(x => x.Date.Value.Month == 10).Sum(x => x.saleAmout));
-            double Nov = Convert.ToDouble(_sales.Where(x => x.Date.Value.Month == 11).Sum(x => x.saleAmout));
-            double Dec = Convert.ToDouble(_sales.Where(x => x.Date.Value.Month == 12).Sum(x => x.saleAmout));
-            salesData[0] = Jan;
-            salesData[1] = Feb;
-            salesData[2] = Mar;
-            salesData[3] = Apr;
-            salesData[4] = May;
-            salesData[5] = Jun;
-            salesData[6] = Jul;
-            salesData[7] = Aug;
-            salesData[8] = Sep;
-            salesData[9] = Oct;
-            salesData[10] = Nov;
-            salesData[11] = Dec;
+            double[] monthlysales = new double[12];
+            foreach (var item in _sales)
+            {
+                int month = item.Date.Value.Month;
+
+                monthlysales[month - 1] += item.saleAmout;
+
+            }
+            salesData = monthlysales;
             MonthlySalesChart.Data = salesData;
+            
+
+            MonthlyExpensesChart.Name = "Monthly Expenses";
+            
+            double[] monthlyExpenses = new double[12];
+
+            // Assign expenses to the corresponding month in the array
+            var result = await _genericService.GetAllAsync<ExpensesTable>("api/AvanPharmacy/GetExpenses");
+            _expenses = result.ToList();
+            foreach (var expense in _expenses)
+            {
+                int month = expense.Date.Value.Month;
+                monthlyExpenses[month - 1] += (double)expense.Amount;
+            }
+            MonthlyExpensesChart.Data = monthlyExpenses;
             MonthlySales.Add(MonthlySalesChart);
+            MonthlySales.Add(MonthlyExpensesChart);
+
+            chartOptions.YAxisLines = true;
+            chartOptions.InterpolationOption = InterpolationOption.Straight;
+            double value = (double)_expenses.Select(x=>x.Amount).Sum();
+            formattedExpenseValue = value.ToString("#,##0.00");
         }
         #endregion
         #region Donught Chart

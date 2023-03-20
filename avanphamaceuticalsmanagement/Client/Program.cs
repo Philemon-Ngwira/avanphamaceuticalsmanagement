@@ -1,8 +1,7 @@
 using avanphamaceuticalsmanagement.Client;
 using avanphamaceuticalsmanagement.Client.Services;
 using avanphamaceuticalsmanagement.Client.Services.Interfaces;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.AspNet.Identity;
+
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;

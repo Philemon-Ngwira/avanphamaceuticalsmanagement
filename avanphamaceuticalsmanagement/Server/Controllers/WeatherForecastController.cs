@@ -1,6 +1,7 @@
 using avanphamaceuticalsmanagement.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 
 namespace avanphamaceuticalsmanagement.Server.Controllers
 {
@@ -22,6 +23,7 @@ namespace avanphamaceuticalsmanagement.Server.Controllers
         }
 
         [HttpGet]
+        [EnableQuery]
         public IEnumerable<WeatherForecast> Get()
         {
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast

@@ -1,4 +1,6 @@
-﻿@using Microsoft.AspNet.Identity.EntityFramework;
+﻿@using Microsoft.AspNetCore.Identity;
+@using avanphamaceuticalsmanagement.Client.Services.Interfaces;
+@using avanphamaceuticalsmanagement.Shared.IdentityModel;
 @inherits Admin
 <MudDialog>
     <DialogContent>
@@ -14,11 +16,33 @@
             </MudItem>
             <MudItem xs="12" md="6">
                 <MudSelect T="string" @bind-Value="viewModel.RoleName" Variant="Variant.Outlined" Margin="Margin.Dense" Placeholder="Roles" Label="Select Role">
-                   @foreach (var item in roles)
+                    @foreach (var item in roles)
                     {
                         <MudSelectItem T="string" Value="item">@item</MudSelectItem>
                     }
-               </MudSelect>
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <InputFile id="fileInput" OnChange="UploadFiles" hidden multiple />
+
+                <MudButton HtmlTag="label"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           for="fileInput">
+                    Upload Profile Picture
+                </MudButton>
+
+
+                @if (files != null)
+                {
+                    <MudText>@files.Count() image/Images Added</MudText>
+                }
+                else
+                {
+                    <MudText>No File</MudText>
+                }
+
+
             </MudItem>
         </MudGrid>
     </DialogContent>
@@ -31,10 +55,34 @@
 </MudDialog>
 
 @code {
-    [Parameter]public IdentityUser User { get; set; } = new();
+    [Parameter] public ApplicationUser User { get; set; } = new();
     protected UserViewModel viewModel = new();
     [Inject] HttpClient HttpClient { get; set; }
+    [Inject] IGenericService GenericService { get; set; }
+    IList<IBrowserFile> files = new List<IBrowserFile>();
+    public ApplicationUser CustomUser = new();
+    public UserManager<ApplicationUser> _userManager { get; set; } 
+    string pic = string.Empty;
+    #region File Upload
 
+    private async void UploadFiles(InputFileChangeEventArgs e)
+    {
+        var format = "image/png";
+        foreach (var file in e.GetMultipleFiles(10))
+        {
+            var resizeImage = await file.RequestImageFileAsync(format, 200, 200);
+            var buffer = new byte[resizeImage.Size];
+            await resizeImage.OpenReadStream().ReadAsync(buffer);
+            var Imagedata = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
+            pic = Imagedata;
+        }
+    }
+    #endregion
+
+    protected async Task CommitUpdate()
+    {
+        await SaveProfilePicture(pic, User);
+    }
 
     protected async Task UpdateUser(string id, UserViewModel user)
     {
@@ -42,8 +90,10 @@
         user.Id = User.Id;
         user.Email = User.Email;
         user.Roles.Add(user.RoleName);
+        await CommitUpdate();
         await HttpClient.PutAsJsonAsync($"api/Admin/{id}/roles", user.Roles);
         Snackbar.Add($"{User.UserName} Successfully Added to Role {viewModel.RoleName}", Severity.Success);
+
         CloseDialog();
         await GetAllUsersAsync();
 

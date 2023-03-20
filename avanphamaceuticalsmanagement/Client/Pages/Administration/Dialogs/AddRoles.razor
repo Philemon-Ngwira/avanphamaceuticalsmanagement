@@ -2,7 +2,7 @@
 @inherits Admin
 <MudDialog>
     <DialogContent>
-        <MudTextField Variant="Variant.Outlined" Margin="Margin.Dense" @bind-Value ="roleName" T="string" Placeholder="Enter Role Name" Label="Role Name"></MudTextField>
+        <MudTextField Variant="Variant.Outlined" Margin="Margin.Dense" @bind-Value ="@roleName" T="string" Placeholder="Enter Role Name" Label="Role Name"></MudTextField>
     </DialogContent>
     <DialogActions>
         <MudButtonGroup OverrideStyles="false">
@@ -13,24 +13,8 @@
 </MudDialog>
 
 @code {
-    public string roleName = string.Empty;
+   
     [Inject] HttpClient HttpClient { get; set; }
-    [Inject] IRolesService _rolesService { get; set; }
-    protected async Task SaveRole()
-    {
-        try
-        {
-            await _rolesService.SaveRole("/api/Admin/SaveAllRoles", roleName);
-            Snackbar.Add("Successfully Added", Severity.Success);
-            await LoadRoles();
-            CloseDialog();
-        }
-        catch (Exception ex)
-        {
-            var _ = ex.Message;
-            throw;
-        }
-        
-
-    }
+   
+   
 }

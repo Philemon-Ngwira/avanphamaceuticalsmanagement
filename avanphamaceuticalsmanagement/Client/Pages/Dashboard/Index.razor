@@ -191,13 +191,22 @@
                         </MudCardHeader>
                         <MudDivider />
                         <MudCardContent>
+                            <MudGrid>
+                                <MudItem md="6">
+                                    <MudAlert Icon="@Icons.Material.Filled.MonetizationOn" Severity="Severity.Info">
+                                        <MudText Align="Align.Left" Typo="Typo.body1"><b>ZMW @formattedRevenueValue Total Revenue</b></MudText>
+                                    </MudAlert>
+
+                                </MudItem>
+                                <MudItem md="6">
+                                    <MudAlert Icon="@Icons.Material.Filled.MoneyOff" Severity="Severity.Error">
+                                        <MudText Align="Align.Left" Typo="Typo.body1"><b>ZMW @formattedExpenseValue Total Spent</b></MudText>
+                                    </MudAlert>
+                                </MudItem>
+                            </MudGrid>
+
                             <div>
-                                <MudAlert Icon="@Icons.Material.Filled.MonetizationOn" Severity="Severity.Info">
-                                    <MudText Align="Align.Left" Typo="Typo.body1"><b>ZMW @formattedRevenueValue Total Revenue</b></MudText>
-                                </MudAlert>
-
-                                <MudChart ChartType="ChartType.Line" ChartSeries="@MonthlySales" @bind-SelectedIndex="LineIndex" XAxisLabels="@XAxisLabels" Width="100%" Height="450px"></MudChart>
-
+                                <MudChart ChartType="ChartType.Line" ChartOptions="chartOptions" ChartSeries="@MonthlySales" @bind-SelectedIndex="LineIndex" XAxisLabels="@XAxisLabels" Width="100%" Height="450px"></MudChart>
                             </div>
                             <MudDivider />
                             <MudText Typo="Typo.body1"><b>Sales in (ZMW)</b></MudText>
@@ -246,9 +255,9 @@
                             {
                                 <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" InputData="@donutdata" InputLabels="@labels">
                                     <CustomGraphics>
-          
+
                                         <text class="donut-inner-text" x="47%" y="35%" dominant-baseline="middle" text-anchor="middle" fill="black" font-family="Helvetica" font-size="2">Total</text>
-                                        <text class="donut-inner-text" x="47%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="black" font-family="Helvetica" font-size="5">ZMW @donutdata.Sum().ToString()</text>
+                                        <text class="donut-inner-text" x="47%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="black" font-family="Helvetica" font-size="3">ZMW @donutdata.Sum().ToString()</text>
                                     </CustomGraphics>
                                 </MudChart>
                             }

@@ -16,14 +16,19 @@ namespace AvanPharmacyDomain.Repositories
 
         public GenericRepository(avanpharmacyDbContext dbContext) { _dbContext = dbContext; }
 
-
+     
         public async Task<IEnumerable<T>> GetAsync<T>() where T : class
         {
-            var result = await _dbContext.Set<T>().ToListAsync();
+            var result = await _dbContext.Set<T>().AsQueryable().ToListAsync();
             return result;
 
         }
 
+        public async Task< IQueryable<T>> GetAll<T>() where T : class
+        {
+
+            return _dbContext.Set<T>().AsQueryable();
+        }
         public async Task<T> GetbyIdAsync<T>(int Id) where T : class, new()
         {
             try

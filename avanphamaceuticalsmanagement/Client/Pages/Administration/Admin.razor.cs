@@ -1,12 +1,15 @@
+
 using avanphamaceuticalsmanagement.Client.Pages.Administration.Dialogs;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
+using avanphamaceuticalsmanagement.Client.Services;
+using avanphamaceuticalsmanagement.Client.Services.Interfaces;
+using avanphamaceuticalsmanagement.Shared.IdentityModel;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Identity;
 using MudBlazor;
 using System.ComponentModel;
 using System.Data;
-using System.Data.Entity;
 using System.Net.Http.Json;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -18,14 +21,17 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Administration
         [Inject] protected ISnackbar Snackbar { get; set; }
         [Inject] HttpClient HttpClient { get; set; }
         [Inject] IDialogService DialogService { get; set; }
+        [Inject] IRolesService _rolesService { get; set; }
+        [Inject] IGenericService _genericService { get; set; }
         [Parameter]
-        public UserManager<IdentityUser> UserManager { get; set; }
+        public UserManager<ApplicationUser> UserManager { get; set; }
         [Inject] AuthenticationStateProvider AuthenticationStateProvider { get; set; }
         [Inject] NavigationManager NavigationManager { get; set; }
         //[Inject] UserManager<IdentityUser> UserManager { get; set; }
         protected string User { get; set; }
+        public string roleName = string.Empty;
         protected UserViewModel UserViewModel { get; set; } = new();
-        protected IList<IdentityUser> Users { get; set; } = new List<IdentityUser>();
+        protected IList<ApplicationUser> Users { get; set; } = new List<ApplicationUser>();
         List<IdentityUser> usersInSelectedRole = new List<IdentityUser>(); 
         protected IList<string> roles = new List<string>();
         protected string name;
@@ -56,7 +62,7 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Administration
                 try
                 {
                     var httpClient = new HttpClient();
-                    var response = await httpClient.GetFromJsonAsync<List<IdentityUser>>("https://localhost:7131/api/Admin");
+                    var response = await httpClient.GetFromJsonAsync<List<ApplicationUser>>("https://localhost:7131/api/Admin");
                     Users = response;
 
                     _loading = false;
@@ -77,6 +83,42 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Administration
 
         }
 
+        public async Task <bool> SaveProfilePicture(string pictureData, ApplicationUser user)
+        {
+            // Get the user from the database
+           
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            // Save the profile picture to the user object
+            user.ProfilePicture = pictureData;
+
+            // Update the user in the database
+            try
+            {
+
+                var response = await HttpClient.PostAsJsonAsync("api/AdminActions/UpdateProfilePicture", user);
+                if (response.IsSuccessStatusCode)
+                {
+                    return true;
+                }
+                else
+                {
+                    
+                    return false;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                var _ = ex.Message;
+                throw;
+            }
+
+        }
 
         private async Task EditUserRoles(string id)
         {
@@ -95,7 +137,23 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Administration
             }
         }
 
+        protected async Task SaveRole()
+        {
+            try
+            {
+                await _rolesService.SaveRole("/api/Admin/SaveAllRoles", roleName);
+                Snackbar.Add("Successfully Added", Severity.Success);
+                await LoadRoles();
+                CloseDialog();
+            }
+            catch (Exception ex)
+            {
+                var _ = ex.Message;
+                throw;
+            }
 
+
+        }
         protected async Task AddRole()
         {
             var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.Large };
@@ -118,7 +176,6 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Administration
 
         }
 
-    
-        
+
     }
 }

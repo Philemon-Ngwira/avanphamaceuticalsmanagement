@@ -2,6 +2,9 @@
 using AvanPharmacyDomain.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
+using NuGet.Protocol.Core.Types;
+using System.Xml.Linq;
 
 namespace avanphamaceuticalsmanagement.Server.Controllers
 {
@@ -65,6 +68,7 @@ namespace avanphamaceuticalsmanagement.Server.Controllers
             var employees = await AvanPharmacyRepository.GetAsync<PatientsTable>();
             return Ok(employees);
         }
+        [EnableQuery]
         [HttpGet("GetAllTransactions")]
         public async Task<IActionResult> GetTransactionsAsync()
         {
@@ -85,18 +89,31 @@ namespace avanphamaceuticalsmanagement.Server.Controllers
             var categoryTables = await AvanPharmacyRepository.GetAsync<StockCategoryTable>();
             return Ok(categoryTables);
         }
+        [HttpGet("GetExpenses")]
+        public async Task<IActionResult> GetExpensesAsync()
+        {
+            var exp = await AvanPharmacyRepository.GetAsync<ExpensesTable>();
+            return Ok(exp);
+        }
         [HttpGet("GetCosmetics")]
         public async Task<IActionResult> GetCosmetics()
         {
             var cosmetic = await AvanPharmacyRepository.GetAsync<CosmeticsStockTable>();
             return Ok(cosmetic);
         }
+        [EnableQuery]
         [HttpGet("GetRestockRequests")]
-        public async Task<IActionResult> GetRestockRequest()
+        public async Task<ActionResult<IQueryable<RestockRequestsTable>>> Get()
         {
-            var request = await AvanPharmacyRepository.GetRestockRequests();
-            return Ok(request);
+            var result = await AvanPharmacyRepository.GetAll<RestockRequestsTable>();
+            return Ok(result);
         }
+        //[HttpGet("GetRestockRequests")]
+        //public async Task<IActionResult> GetRestockRequest()
+        //{
+        //    var request = await AvanPharmacyRepository.GetRestockRequests();
+        //    return Ok(request);
+        //}
         [HttpGet("GetRestockRequestsDashboard")]
         public async Task<IActionResult> GetRequestCount()
         {

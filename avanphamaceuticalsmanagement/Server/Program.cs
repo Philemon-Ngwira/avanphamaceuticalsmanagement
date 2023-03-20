@@ -9,6 +9,9 @@ using AvanPharmacyDomain.Repositories;
 using AvanPharmacyDomain.Data;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.OData;
+using avanphamaceuticalsmanagement.Shared.IdentityModel;
+using ApplicationUser = avanphamaceuticalsmanagement.Shared.IdentityModel.ApplicationUser;
 
 namespace avanphamaceuticalsmanagement
 {
@@ -19,6 +22,7 @@ namespace avanphamaceuticalsmanagement
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+    
             builder.Services.AddControllersWithViews().AddNewtonsoftJson(options =>
    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
 );
@@ -53,6 +57,8 @@ namespace avanphamaceuticalsmanagement
             builder.Services.AddScoped<IGenericRepository, GenericRepository>();
             builder.Services.AddScoped<AvanPharmacyRepository>();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddControllersWithViews().AddOData(options => options.Select().Filter().OrderBy());
+
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
 
