@@ -70,10 +70,10 @@ namespace avanphamaceuticalsmanagement.Server.Controllers
         }
         [EnableQuery]
         [HttpGet("GetAllTransactions")]
-        public async Task<IActionResult> GetTransactionsAsync()
+        public async Task<IQueryable<PharmacyTransactionsTable>> GetTransactionsAsync()
         {
-            var employees = await AvanPharmacyRepository.GetAsync<PharmacyTransactionsTable>();
-            return Ok(employees);
+            var employees = await AvanPharmacyRepository.GetAll<PharmacyTransactionsTable>();
+            return employees.AsQueryable();
         }
 
         [HttpGet("GetCustomertypes")]
@@ -103,10 +103,11 @@ namespace avanphamaceuticalsmanagement.Server.Controllers
         }
         [EnableQuery]
         [HttpGet("GetRestockRequests")]
-        public async Task<ActionResult<IQueryable<RestockRequestsTable>>> Get()
+        public async Task<IQueryable<RestockRequestsTable>> Get()
         {
             var result = await AvanPharmacyRepository.GetAll<RestockRequestsTable>();
-            return Ok(result);
+
+            return result.AsQueryable();
         }
         //[HttpGet("GetRestockRequests")]
         //public async Task<IActionResult> GetRestockRequest()
@@ -182,9 +183,10 @@ namespace avanphamaceuticalsmanagement.Server.Controllers
             var result = await AvanPharmacyRepository.updateAsync(drugStock);
             return Ok(result);
         }
+
         //
         #endregion
-
+       
         #region Delete
         [HttpDelete("DeleteDrugs/{Id}")]
         public async Task<IActionResult> DeleteDrugs(int id)

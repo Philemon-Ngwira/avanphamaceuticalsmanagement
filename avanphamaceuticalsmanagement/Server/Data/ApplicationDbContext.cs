@@ -2,6 +2,7 @@
 using avanphamaceuticalsmanagement.Shared.IdentityModel;
 using Duende.IdentityServer.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -16,11 +17,24 @@ namespace avanphamaceuticalsmanagement.Server.Data
         }
 
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
-        
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
         }
     }
+
+    //public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    //{
+    //    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    //        : base(options)
+    //    {
+    //    }
+
+    //    protected override void OnModelCreating(ModelBuilder builder)
+    //    {
+    //        base.OnModelCreating(builder);
+    //    }
+    //}
 }

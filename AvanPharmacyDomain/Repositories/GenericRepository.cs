@@ -24,7 +24,7 @@ namespace AvanPharmacyDomain.Repositories
 
         }
 
-        public async Task< IQueryable<T>> GetAll<T>() where T : class
+        public async Task<IQueryable<T>> GetAll<T>() where T : class
         {
 
             return _dbContext.Set<T>().AsQueryable();

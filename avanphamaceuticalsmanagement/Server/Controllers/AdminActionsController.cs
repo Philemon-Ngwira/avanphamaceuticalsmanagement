@@ -1,7 +1,9 @@
-﻿using avanphamaceuticalsmanagement.Shared.IdentityModel;
+﻿using avanphamaceuticalsmanagement.Server.Data;
+using avanphamaceuticalsmanagement.Shared.IdentityModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace avanphamaceuticalsmanagement.Server.Controllers
 {
@@ -10,32 +12,27 @@ namespace avanphamaceuticalsmanagement.Server.Controllers
     public class AdminActionsController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        public AdminActionsController(UserManager<ApplicationUser> userManager)
+        private readonly AdminContext _context;
+        
+        public AdminActionsController(UserManager<ApplicationUser> userManager, AdminContext context)
         {
             _userManager = userManager;
-         
+            _context = context;
+
         }
 
-
         [HttpPost("UpdateProfilePicture")]
-        public async Task<IActionResult> UpdateProfilePicture(ApplicationUser applicationUser)
+        public async Task<IActionResult> UpdateProfilePicture([FromBody] ApplicationUser applicationUser)
         {
             string id = applicationUser.Id;
             string userpic = applicationUser.ProfilePicture;
-            var update = await _userManager.FindByIdAsync(id);
+            var update = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
             if (update != null)
             {
-
-                update.ProfilePicture = userpic;
-                var result = await _userManager.UpdateAsync(update);
-                if (result.Succeeded)
-                {
+                    update.ProfilePicture = userpic;
+                    _context.Users.Update(update);
+                    await _context.SaveChangesAsync();
                     return Ok();
-                }
-                else
-                {
-                    return BadRequest(result.Errors);
-                }
             }
             else
             {

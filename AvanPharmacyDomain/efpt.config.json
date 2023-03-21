@@ -7,7 +7,7 @@
    "IncludeConnectionString": false,
    "ModelNamespace": null,
    "OutputContextPath": "Data",
-   "OutputPath": "Models",
+   "OutputPath": "Data",
    "PreserveCasingWithRegex": true,
    "ProjectRootNamespace": "AvanPharmacyDomain",
    "Schemas": null,
@@ -16,6 +16,34 @@
    "Tables": [
       {
          "Name": "[dbo].[AgrovetStockTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AspNetRoleClaims]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AspNetRoles]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AspNetUserClaims]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AspNetUserLogins]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AspNetUserRoles]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AspNetUsers]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AspNetUserTokens]",
          "ObjectType": 0
       },
       {
@@ -60,10 +88,6 @@
       },
       {
          "Name": "[dbo].[PatientsTable]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[PersistedGrants]",
          "ObjectType": 0
       },
       {

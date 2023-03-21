@@ -22,13 +22,15 @@ namespace avanphamaceuticalsmanagement
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-    
+
             builder.Services.AddControllersWithViews().AddNewtonsoftJson(options =>
    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
 );
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(connectionString));
+            builder.Services.AddDbContext<AdminContext>(options =>
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
             //builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
@@ -59,7 +61,7 @@ namespace avanphamaceuticalsmanagement
             builder.Services.AddSwaggerGen();
             builder.Services.AddControllersWithViews().AddOData(options => options.Select().Filter().OrderBy());
 
-            builder.Services.AddControllersWithViews();
+            //builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
 
             var app = builder.Build();

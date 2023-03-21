@@ -4,6 +4,10 @@ using MudBlazor;
 using avanphamaceuticalsmanagement.Client.Services.Interfaces;
 using avanphamaceuticalsmanagement.Shared.Models;
 using System.Globalization;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+using avanphamaceuticalsmanagement.Shared.IdentityModel;
+using System.Net.Http.Json;
 
 namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
 {
@@ -17,6 +21,7 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
         IGenericService _genericService { get; set; }
 
         TimeSpan time = new TimeSpan();
+        protected IList<ApplicationUser> Users { get; set; } = new List<ApplicationUser>();
         protected IList<PatientsTable> _patients = new List<PatientsTable>();
         protected IList<DrugStockTable> _drugs = new List<DrugStockTable>();
         protected IList<EmployeesTable> employees = new List<EmployeesTable>();
@@ -41,12 +46,12 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
         protected double percentage;
         protected string percentageChangeString;
         protected string patienterror = string.Empty;
-        protected  Dictionary<string, double> categorySales = new Dictionary<string, double>();
-        protected double totalSales ;
+        protected Dictionary<string, double> categorySales = new Dictionary<string, double>();
+        protected double totalSales;
         protected double IncomeBudget;
         protected string totalsalesString = string.Empty;
         protected ChartOptions chartOptions = new ChartOptions();
-
+        public string profilepic = string.Empty;
         protected override async Task OnInitializedAsync()
         {
             var auth = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -62,7 +67,8 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
             {
                 RoleName = "Employee";
             }
-
+            await GetAllUsersAsync();
+            await GetPPAsync();
             await GetBudgets();
             await GetAllPatients();
             await GetAllEmployees();
@@ -133,7 +139,7 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
                 SalesError = "No sales Recorded Yet.";
             }
         }
-        protected void  CalculateSalesTrajectory()
+        protected void CalculateSalesTrajectory()
         {
 
             // Get the current month and year
@@ -142,7 +148,7 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
             int currentYear = now.Year;
 
             // Find the sales amount for the current month
-            double currentSalesAmount = _sales.Where(s => s.Date.Value.Month == currentMonth && s.Date.Value.Year == currentYear)?.Sum(x=>x.saleAmout)?? 0;
+            double currentSalesAmount = _sales.Where(s => s.Date.Value.Month == currentMonth && s.Date.Value.Year == currentYear)?.Sum(x => x.saleAmout) ?? 0;
 
             // Find the sales amount for the previous month
             int previousMonth = currentMonth == 1 ? 12 : currentMonth - 1;
@@ -154,7 +160,7 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
             if (previousSalesAmount == 0 && currentSalesAmount > 0)
             {
                 percentageChange = 100;
-               
+
             }
             else if (previousSalesAmount != 0)
             {
@@ -167,9 +173,9 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
                 trajectoryItem.Icon = @Icons.Material.Filled.ArrowUpward;
                 trajectoryItem.IconColor = Color.Success;
                 trajectoryItem.IconSize = Size.Large;
-                percentageChangeString=percentage.ToString("0.00'%'", CultureInfo.InvariantCulture);
+                percentageChangeString = percentage.ToString("0.00'%'", CultureInfo.InvariantCulture);
             }
-            else if(currentSalesAmount < previousSalesAmount)
+            else if (currentSalesAmount < previousSalesAmount)
             {
                 percentage = percentageChange;
                 trajectoryItem.Icon = @Icons.Material.Filled.TrendingDown;
@@ -177,7 +183,7 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
                 trajectoryItem.IconSize = Size.Large;
                 percentageChangeString = percentage.ToString("0.00'%'", CultureInfo.InvariantCulture);
             }
-            else if(currentSalesAmount > previousSalesAmount && percentageChange != 100)
+            else if (currentSalesAmount > previousSalesAmount && percentageChange != 100)
             {
                 percentage = percentageChange;
                 trajectoryItem.Icon = @Icons.Material.Filled.TrendingUp;
@@ -189,7 +195,7 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
         #endregion
         #region Line Chart
         public List<ChartSeries> MonthlySales = new List<ChartSeries>();
-     
+
         public string[] XAxisLabels =
         {
             "Jan",
@@ -221,10 +227,10 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
             }
             salesData = monthlysales;
             MonthlySalesChart.Data = salesData;
-            
+
 
             MonthlyExpensesChart.Name = "Monthly Expenses";
-            
+
             double[] monthlyExpenses = new double[12];
 
             // Assign expenses to the corresponding month in the array
@@ -241,7 +247,7 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
 
             chartOptions.YAxisLines = true;
             chartOptions.InterpolationOption = InterpolationOption.Straight;
-            double value = (double)_expenses.Select(x=>x.Amount).Sum();
+            double value = (double)_expenses.Select(x => x.Amount).Sum();
             formattedExpenseValue = value.ToString("#,##0.00");
         }
         #endregion
@@ -273,11 +279,53 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
         {
             int currentYear = DateTime.Now.Year;
             string IncomeBudgetName = "Operating Income";
-            IncomeBudget = (double)budgets.Where(x=>x.BudgetType.BudgetType == IncomeBudgetName && x.StartDate.Value.Year == currentYear).Select(x=>x.Amount).Sum();
-            var num = _sales.Where(x => x.Date.Value.Year == currentYear).Select(X=>X.saleAmout).Sum();
+            IncomeBudget = (double)budgets.Where(x => x.BudgetType.BudgetType == IncomeBudgetName && x.StartDate.Value.Year == currentYear).Select(x => x.Amount).Sum();
+            var num = _sales.Where(x => x.Date.Value.Year == currentYear).Select(X => X.saleAmout).Sum();
             totalSales = num / IncomeBudget * 100;
             totalsalesString = totalSales.ToString("0.00'%'", CultureInfo.InvariantCulture);
         }
         #endregion
+
+        protected async Task GetPPAsync()
+        {
+            var auth = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = auth.User;
+
+            foreach (var item in Users)
+            {
+                if (item.UserName.Contains(user.Identity.Name))
+                {
+                    profilepic = item.ProfilePicture;
+                }
+            }
+
+
+
+        }
+
+        protected async Task GetAllUsersAsync()
+        {
+            if (Users.Count == 0)
+            {
+
+                try
+                {
+                    var httpClient = new HttpClient();
+                    var response = await httpClient.GetFromJsonAsync<List<ApplicationUser>>("https://localhost:7131/api/Admin");
+                    Users = response;
+
+
+
+                }
+                catch (Exception ex)
+                {
+                    var _ = ex.Message;
+                    throw;
+                }
+            }
+
+
+
+        }
     }
 }

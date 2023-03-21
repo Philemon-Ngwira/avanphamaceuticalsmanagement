@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\test\test\Shared\test.Shared.csproj" />
     <ProjectReference Include="..\avanphamaceuticalsmanagement\Shared\avanphamaceuticalsmanagement.Shared.csproj" />
   </ItemGroup>
 

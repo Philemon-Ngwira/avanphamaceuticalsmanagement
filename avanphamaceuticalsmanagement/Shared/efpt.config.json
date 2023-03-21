@@ -19,6 +19,34 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[AspNetRoleClaims]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AspNetRoles]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AspNetUserClaims]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AspNetUserLogins]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AspNetUserRoles]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AspNetUsers]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AspNetUserTokens]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[BudgetsTable]",
          "ObjectType": 0
       },
@@ -60,10 +88,6 @@
       },
       {
          "Name": "[dbo].[PatientsTable]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[PersistedGrants]",
          "ObjectType": 0
       },
       {
