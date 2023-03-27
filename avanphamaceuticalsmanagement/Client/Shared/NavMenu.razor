@@ -1,6 +1,7 @@
 ﻿@using avanphamaceuticalsmanagement.Client.Pages.Dashboard;
-@inject IndexBase index
+
 <MudNavMenu>
+    
     <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
 
     <AuthorizeView Roles="Employee">
@@ -16,7 +17,7 @@
     <AuthorizeView Roles="Admin">
         <Authorized>
             <MudNavLink Href="/Admin" Match="NavLinkMatch.Prefix" Icon="fa-solid fa-user-gear">Manage Users and Roles</MudNavLink>
-            <MudBadge Content="RequestCount" Overlap="true" Color="Color.Primary">
+            <MudBadge Content="0" Overlap="true" Color="Color.Primary">
                 <MudNavLink Href="/RequestsForApproval" Match="NavLinkMatch.Prefix" ForceLoad="true" Icon="@Icons.Material.Filled.Approval">Requests For Approval</MudNavLink>
             </MudBadge>
             <MudNavLink Href="/Budgets" Match="NavLinkMatch.Prefix" Icon="fa-solid fa-building-columns">Budgets</MudNavLink>
@@ -28,5 +29,5 @@
 </MudNavMenu>
 
 @code {
-    private int RequestCount => index.numberofRequests;
+    //private int RequestCount => index.numberofRequests;
 }

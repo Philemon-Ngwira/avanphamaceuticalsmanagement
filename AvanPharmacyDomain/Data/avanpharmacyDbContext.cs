@@ -47,7 +47,6 @@ public partial class avanpharmacyDbContext : DbContext
     public virtual DbSet<ExpenseTypesTable> ExpenseTypesTables { get; set; }
 
     public virtual DbSet<ExpensesTable> ExpensesTables { get; set; }
-
     public virtual DbSet<PatientsTable> PatientsTables { get; set; }
 
     public virtual DbSet<PharmacyTransactionsTable> PharmacyTransactionsTables { get; set; }
@@ -74,8 +73,6 @@ public partial class avanpharmacyDbContext : DbContext
             entity.HasIndex(e => e.NormalizedUserName, "UserNameIndex")
                 .IsUnique()
                 .HasFilter("([NormalizedUserName] IS NOT NULL)");
-
-            entity.Property(e => e.ProfilePicture).HasDefaultValueSql("(N'')");
 
             entity.HasMany(d => d.Roles).WithMany(p => p.Users)
                 .UsingEntity<Dictionary<string, object>>(

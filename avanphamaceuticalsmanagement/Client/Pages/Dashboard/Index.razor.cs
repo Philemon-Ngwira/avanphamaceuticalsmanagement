@@ -8,13 +8,15 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using avanphamaceuticalsmanagement.Shared.IdentityModel;
 using System.Net.Http.Json;
+using avanphamaceuticalsmanagement.Client.Shared;
 
 namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
 {
-    public partial class IndexBase : ComponentBase
+    public partial class IndexBase : ComponentBase 
     {
         protected int LineIndex = -1; //default value cannot be 0 -> first selectedindex is 0.
         [Inject]
+       
         AuthenticationStateProvider AuthenticationStateProvider { get; set; }
 
         [Inject]
@@ -52,11 +54,17 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
         protected string totalsalesString = string.Empty;
         protected ChartOptions chartOptions = new ChartOptions();
         public string profilepic = string.Empty;
+        protected IList<AspNetUser> Netusers = new List<AspNetUser>();
         protected override async Task OnInitializedAsync()
         {
+            await GetAllUsersAsync();
+            await GetAllASPUsers();
             var auth = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             var user = auth.User;
+            var userpic =  Netusers.Where(x => x.UserName == user.Identity.Name).FirstOrDefault();
+            profilepic = userpic.ProfilePicture;
             name = user.Identity.Name;
+            
             if (user.IsInRole("Admin"))
             {
                 RoleName = "Administrator";
@@ -67,7 +75,6 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
             {
                 RoleName = "Employee";
             }
-            await GetAllUsersAsync();
             await GetPPAsync();
             await GetBudgets();
             await GetAllPatients();
@@ -138,6 +145,12 @@ namespace avanphamaceuticalsmanagement.Client.Pages.Dashboard
             {
                 SalesError = "No sales Recorded Yet.";
             }
+        }
+
+        protected async Task GetAllASPUsers()
+        {
+            var result = await _genericService.GetAllAsync<AspNetUser>("api/AvanPharmacy/GetNetUsers");
+            Netusers = result.ToList();
         }
         protected void CalculateSalesTrajectory()
         {

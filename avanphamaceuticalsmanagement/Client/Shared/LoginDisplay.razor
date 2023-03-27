@@ -1,13 +1,33 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Microsoft.AspNetCore.Identity;
+@using avanphamaceuticalsmanagement.Client.Pages.Dashboard;
+@using avanphamaceuticalsmanagement.Client.Services.Interfaces;
+@using avanphamaceuticalsmanagement.Shared.IdentityModel;
+@using avanphamaceuticalsmanagement.Shared.Models;
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@inherits Microsoft.AspNetCore.Components.Authorization.AuthorizeView
 @inject NavigationManager Navigation
-
+@*
+@inject UserManager<ApplicationUser> UserManager*@
 <AuthorizeView>
     <Authorized>
 
         <MudButton Color="Color.Primary"><a href="authentication/profile">Hello, @context.User.Identity?.Name!</a></MudButton>
 
         <MudButton Color="Color.Error" StartIcon="@Icons.Material.Filled.Logout" OnClick="BeginLogOut">Log Out</MudButton>
+        @if (picture != string.Empty)
+        {
+            <MudAvatar Image="@picture">
+            </MudAvatar>
+        }
+        else
+        {
+            <MudAvatar>
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+            </MudAvatar>
+        }
         @*  <button class="nav-link btn btn-link" @onclick="BeginLogOut">Log out</button>*@
     </Authorized>
     <NotAuthorized>
@@ -21,6 +41,32 @@
 </AuthorizeView>
 
 @code {
+    protected IList<AspNetUser> Netusers = new List<AspNetUser>();
+    [Inject] AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+    [Inject] IGenericService _genericService { get; set; }
+    public string picture = string.Empty;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetAllUsers();
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity.IsAuthenticated)
+        {
+            var currentuser = Netusers.Where(c=>c.UserName == user.Identity.Name).FirstOrDefault();
+            if (currentuser != null)
+            {
+
+                picture = currentuser.ProfilePicture;
+            }
+        }
+    }
+    protected async Task GetAllUsers()
+    {
+        var result = await _genericService.GetAllAsync<AspNetUser>("api/AvanPharmacy/GetNetUsers");
+        Netusers = result.ToList();
+    }
     private void BeginLogOut()
     {
         Navigation.NavigateToLogout("authentication/logout");

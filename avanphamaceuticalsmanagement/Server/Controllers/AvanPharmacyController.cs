@@ -114,7 +114,13 @@ namespace avanphamaceuticalsmanagement.Server.Controllers
         //{
         //    var request = await AvanPharmacyRepository.GetRestockRequests();
         //    return Ok(request);
-        //}
+        //}GetNetUsers
+        [HttpGet("GetNetUsers")]
+        public async Task<IActionResult> GetNetUsers()
+        {
+            var cosmetic = await AvanPharmacyRepository.GetAsync<AspNetUser>();
+            return Ok(cosmetic);
+        }
         [HttpGet("GetRestockRequestsDashboard")]
         public async Task<IActionResult> GetRequestCount()
         {

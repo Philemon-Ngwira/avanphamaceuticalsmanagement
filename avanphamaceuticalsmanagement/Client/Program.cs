@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
 using avanphamaceuticalsmanagement.Client.Pages.Dashboard;
+using avanphamaceuticalsmanagement.Shared.IdentityModel;
+using Microsoft.AspNetCore.Identity;
 
 namespace avanphamaceuticalsmanagement.Client
 {
@@ -28,7 +30,7 @@ namespace avanphamaceuticalsmanagement.Client
 
             builder.Services.AddScoped<IGenericService, GenericService>();
             builder.Services.AddScoped<IRolesService, RolesService>();
-            builder.Services.AddScoped<IndexBase>();
+
             builder.Services.AddMudServices();
             builder.Services.AddApiAuthorization();
 

@@ -87,7 +87,15 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[Keys]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[PatientsTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[PersistedGrants]",
          "ObjectType": 0
       },
       {

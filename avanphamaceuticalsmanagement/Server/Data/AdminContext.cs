@@ -14,7 +14,16 @@ namespace avanphamaceuticalsmanagement.Server.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<ApplicationUser>(entity =>
+            {
+                entity.Property(e => e.ProfilePicture)
+                    .HasColumnName("ProfilePicture")
+                    .HasMaxLength(255); 
+            });
         }
+
+
     }
 
 
